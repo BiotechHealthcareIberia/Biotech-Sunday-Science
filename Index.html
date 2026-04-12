@@ -2,78 +2,180 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Sunday Science | Oftalmo Challenge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunday Science | Dashboard MIR 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        #game-container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 90%; max-width: 500px; text-align: center; }
-        h1 { color: #0077b5; margin-bottom: 0.5rem; }
-        .question { font-size: 1.2rem; font-weight: bold; margin-bottom: 1.5rem; color: #333; }
-        .option { display: block; width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #eee; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: none; font-size: 1rem; }
-        .option:hover { border-color: #0077b5; background: #f0f7ff; }
-        #score { margin-top: 1rem; font-weight: bold; color: #666; }
-        .hidden { display: none; }
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #38bdf8;
+            --text: #f8fafc;
+            --correct: #22c55e;
+            --wrong: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #dashboard {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 550px;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        header { text-align: center; margin-bottom: 1.5rem; }
+        h1 { font-size: 1.4rem; letter-spacing: 1px; color: var(--accent); margin: 5px 0; }
+        .badge { background: rgba(56, 189, 248, 0.2); color: var(--accent); padding: 5px 15px; border-radius: 50px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+
+        .progress-container { height: 8px; background: #334155; border-radius: 10px; margin: 20px 0; }
+        #progress-bar { height: 100%; background: var(--accent); width: 0%; border-radius: 10px; transition: width 0.5s ease; }
+
+        .question-area { min-height: 100px; margin-bottom: 20px; }
+        .question-area p { font-size: 1.1rem; line-height: 1.5; color: #e2e8f0; }
+
+        .options-grid { display: grid; gap: 10px; }
+        .btn-opt {
+            background: #334155;
+            border: 2px solid transparent;
+            color: var(--text);
+            padding: 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+
+        .btn-opt:hover { background: #475569; border-color: var(--accent); }
+        .btn-opt.correct { background: var(--correct) !important; border-color: var(--correct); }
+        .btn-opt.wrong { background: var(--wrong) !important; border-color: var(--wrong); }
+
+        #footer-info { display: flex; justify-content: space-between; margin-top: 25px; font-size: 0.8rem; color: #94a3b8; border-top: 1px solid #334155; padding-top: 15px; }
+
+        #results-screen { display: none; text-align: center; padding: 20px 0; }
+        .big-score { font-size: 4rem; font-weight: bold; color: var(--accent); margin: 10px 0; }
+        .btn-restart { background: var(--accent); color: var(--bg); border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-<div id="game-container">
-    <h1>🔬 SUNDAY SCIENCE</h1>
-    <p>Oftalmología: Nivel MIR 2026</p>
-    <hr>
-    <div id="quiz">
-        <div id="question-text" class="question"></div>
-        <div id="options-container"></div>
+<div id="dashboard">
+    <div id="quiz-screen">
+        <header>
+            <span class="badge">Especialidad: Oftalmología</span>
+            <h1>🔬 SUNDAY SCIENCE</h1>
+        </header>
+
+        <div class="progress-container"><div id="progress-bar"></div></div>
+
+        <div class="question-area">
+            <p id="txt-pregunta">Preparando instrumental médico...</p>
+        </div>
+
+        <div id="btn-container" class="options-grid"></div>
+
+        <div id="footer-info">
+            <span>Pregunta: <b id="idx-actual">1</b> / 5</span>
+            <span>Aciertos: <b id="puntos">0</b></span>
+        </div>
     </div>
-    <div id="result" class="hidden">
-        <h2>Juego Terminado</h2>
-        <p id="final-score"></p>
-        <button class="option" onclick="location.reload()">Reintentar</button>
+
+    <div id="results-screen">
+        <h2 id="final-status">Fin de la Consulta</h2>
+        <div class="big-score" id="final-score">0/5</div>
+        <p id="final-msg"></p>
+        <button class="btn-restart" onclick="location.reload()">NUEVO PACIENTE</button>
     </div>
-    <div id="score">Pregunta: <span id="current-idx">1</span>/5</div>
 </div>
 
 <script>
-    const questions = [
-        { q: "Fondo de ojo con retinitis en 'queso de pizza' en paciente VIH:", a: ["Coroidopatía Central", "Retinitis por CMV", "Retinoblastoma", "Endoftalmitis"], correct: 1 },
-        { q: "Causa más frecuente de leucocoria tras descartar tumor:", a: ["Catarata Congénita", "Enfermedad de Coats", "Vítreo Primario", "Retinopatía"], correct: 0 },
-        { q: "Visión borrosa, DPAR (+) y fondo de ojo NORMAL:", a: ["Oclusión Arterial", "Neuritis Retrobulbar", "Papiledema", "Glaucoma Agudo"], correct: 1 },
-        { q: "Síntoma de metamorfopsia sugiere daño en:", a: ["Nervio Óptico", "Cristalino", "Mácula", "Córnea"], correct: 2 },
-        { q: "Infiltrados numulares en conjuntivitis indican:", a: ["Fase de Contagio", "Secuela Visual", "Infección Bacteriana", "Curación Total"], correct: 1 }
+    const bancoPreguntas = [
+        { p: "Fondo de ojo con retinitis en 'queso de pizza' (hemorragias y exudados) en inmunodeprimido:", o: ["Coroidopatía central", "Retinitis por CMV", "Desprendimiento retina", "Endoftalmitis"], c: 1 },
+        { p: "Causa más frecuente de LEUCOCORIA en la infancia tras descartar Retinoblastoma:", o: ["Catarata congénita", "Enfermedad de Coats", "Vítreo primario", "Retinopatía del prematuro"], c: 0 },
+        { p: "Pérdida de visión, dolor al mover el ojo, DPAR (+) y fondo de ojo NORMAL:", o: ["Neuritis retrobulbar", "Oclusión arterial", "Papiledema", "Glaucoma crónico"], c: 0 },
+        { p: "Los 'Infiltrados subepiteliales numulares' post-conjuntivitis son típicos de:", o: ["Infección por VIH", "Secuela de Adenovirus", "Uveítis anterior", "Glaucoma agudo"], c: 1 },
+        { p: "Signo de 'Humo de chimenea' en angiografía con desprendimiento seroso en paciente joven:", o: ["Vogt-Koyanagi-Harada", "Central Serosa", "Coroiditis Birdshot", "Melanoma"], c: 1 }
     ];
 
-    let currentQ = 0;
+    let currentIdx = 0;
     let score = 0;
+    let blockInput = false;
 
-    function loadQuestion() {
-        const q = questions[currentQ];
-        document.getElementById("question-text").innerText = q.q;
-        document.getElementById("current-idx").innerText = currentQ + 1;
-        const container = document.getElementById("options-container");
+    function startQuiz() {
+        if (currentIdx >= bancoPreguntas.length) return endQuiz();
+        
+        blockInput = false;
+        const data = bancoPreguntas[currentIdx];
+        document.getElementById('txt-pregunta').innerText = data.p;
+        document.getElementById('idx-actual').innerText = currentIdx + 1;
+        document.getElementById('progress-bar').style.width = (currentIdx / bancoPreguntas.length * 100) + "%";
+
+        const container = document.getElementById('btn-container');
         container.innerHTML = "";
-        q.a.forEach((opt, i) => {
-            const btn = document.createElement("button");
-            btn.className = "option";
-            btn.innerText = opt;
-            btn.onclick = () => checkAnswer(i);
-            container.appendChild(btn);
+        
+        data.o.forEach((txt, i) => {
+            const b = document.createElement('button');
+            b.className = 'btn-opt';
+            b.innerText = txt;
+            b.onclick = () => checkAnswer(i, b);
+            container.appendChild(b);
         });
     }
 
-    function checkAnswer(idx) {
-        if(idx === questions[currentQ].correct) score++;
-        currentQ++;
-        if(currentQ < questions.length) loadQuestion();
-        else showResults();
+    function checkAnswer(chosen, btn) {
+        if (blockInput) return;
+        blockInput = true;
+
+        const correct = bancoPreguntas[currentIdx].c;
+        if (chosen === correct) {
+            btn.classList.add('correct');
+            score++;
+            document.getElementById('puntos').innerText = score;
+        } else {
+            btn.classList.add('wrong');
+            document.querySelectorAll('.btn-opt')[correct].classList.add('correct');
+        }
+
+        setTimeout(() => {
+            currentIdx++;
+            startQuiz();
+        }, 1200);
     }
 
-    function showResults() {
-        document.getElementById("quiz").className = "hidden";
-        document.getElementById("score").className = "hidden";
-        document.getElementById("result").classList.remove("hidden");
-        document.getElementById("final-score").innerText = `Tu puntuación: ${score} de ${questions.length}`;
+    function endQuiz() {
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('results-screen').style.display = 'block';
+        document.getElementById('final-score').innerText = score + "/5";
+        
+        let m = "";
+        if(score === 5) {
+            m = "¡Excelente, Doctor! Nivel Especialista alcanzado. 🏆";
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        } else if(score >= 3) {
+            m = "Buen trabajo. Tu plaza MIR está asegurada. 🩺";
+        } else {
+            m = "Hay que repasar el Atlas de Oftalmología. 📚";
+        }
+        document.getElementById('final-msg').innerText = m;
     }
 
-    loadQuestion();
+    // Arrancamos
+    startQuiz();
 </script>
 </body>
 </html>

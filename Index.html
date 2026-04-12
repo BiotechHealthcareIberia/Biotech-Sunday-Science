@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sunday Science | Oftalmo Challenge</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #game-container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 90%; max-width: 500px; text-align: center; }
+        h1 { color: #0077b5; margin-bottom: 0.5rem; }
+        .question { font-size: 1.2rem; font-weight: bold; margin-bottom: 1.5rem; color: #333; }
+        .option { display: block; width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #eee; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: none; font-size: 1rem; }
+        .option:hover { border-color: #0077b5; background: #f0f7ff; }
+        #score { margin-top: 1rem; font-weight: bold; color: #666; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <h1>🔬 SUNDAY SCIENCE</h1>
+    <p>Oftalmología: Nivel MIR 2026</p>
+    <hr>
+    <div id="quiz">
+        <div id="question-text" class="question"></div>
+        <div id="options-container"></div>
+    </div>
+    <div id="result" class="hidden">
+        <h2>Juego Terminado</h2>
+        <p id="final-score"></p>
+        <button class="option" onclick="location.reload()">Reintentar</button>
+    </div>
+    <div id="score">Pregunta: <span id="current-idx">1</span>/5</div>
+</div>
+
+<script>
+    const questions = [
+        { q: "Fondo de ojo con retinitis en 'queso de pizza' en paciente VIH:", a: ["Coroidopatía Central", "Retinitis por CMV", "Retinoblastoma", "Endoftalmitis"], correct: 1 },
+        { q: "Causa más frecuente de leucocoria tras descartar tumor:", a: ["Catarata Congénita", "Enfermedad de Coats", "Vítreo Primario", "Retinopatía"], correct: 0 },
+        { q: "Visión borrosa, DPAR (+) y fondo de ojo NORMAL:", a: ["Oclusión Arterial", "Neuritis Retrobulbar", "Papiledema", "Glaucoma Agudo"], correct: 1 },
+        { q: "Síntoma de metamorfopsia sugiere daño en:", a: ["Nervio Óptico", "Cristalino", "Mácula", "Córnea"], correct: 2 },
+        { q: "Infiltrados numulares en conjuntivitis indican:", a: ["Fase de Contagio", "Secuela Visual", "Infección Bacteriana", "Curación Total"], correct: 1 }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+
+    function loadQuestion() {
+        const q = questions[currentQ];
+        document.getElementById("question-text").innerText = q.q;
+        document.getElementById("current-idx").innerText = currentQ + 1;
+        const container = document.getElementById("options-container");
+        container.innerHTML = "";
+        q.a.forEach((opt, i) => {
+            const btn = document.createElement("button");
+            btn.className = "option";
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(i);
+            container.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(idx) {
+        if(idx === questions[currentQ].correct) score++;
+        currentQ++;
+        if(currentQ < questions.length) loadQuestion();
+        else showResults();
+    }
+
+    function showResults() {
+        document.getElementById("quiz").className = "hidden";
+        document.getElementById("score").className = "hidden";
+        document.getElementById("result").classList.remove("hidden");
+        document.getElementById("final-score").innerText = `Tu puntuación: ${score} de ${questions.length}`;
+    }
+
+    loadQuestion();
+</script>
+</body>
+</html>

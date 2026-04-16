@@ -1,181 +1,352 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sunday Science | Dashboard MIR 2026</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <style>
-        :root {
-            --bg: #0f172a;
-            --card: #1e293b;
-            --accent: #38bdf8;
-            --text: #f8fafc;
-            --correct: #22c55e;
-            --wrong: #ef4444;
-        }
+import React, { useState, useEffect, useRef } from 'react';
+import { Trophy, Award, ChevronRight, CheckCircle2, XCircle, Eye, RefreshCw, Linkedin, Download, Zap, Brain, Sparkles, Frown, Hexagon, Crown, Star, Target } from 'lucide-react';
 
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
+// Inyección dinámica de la librería de confeti
+const loadConfetti = () => {
+  return new Promise((resolve) => {
+    if (window.confetti) {
+      resolve(window.confetti);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
+    script.onload = () => resolve(window.confetti);
+    document.head.appendChild(script);
+  });
+};
 
-        #dashboard {
-            background: var(--card);
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            width: 90%;
-            max-width: 550px;
-            border: 1px solid rgba(255,255,255,0.1);
-            position: relative;
-        }
+// Ojos Interactivos que siguen el cursor
+const InteractiveEyes = () => {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const eyeLeftRef = useRef(null);
+  const eyeRightRef = useRef(null);
 
-        header { text-align: center; margin-bottom: 1.5rem; }
-        h1 { font-size: 1.4rem; letter-spacing: 1px; color: var(--accent); margin: 5px 0; }
-        .badge { background: rgba(56, 189, 248, 0.2); color: var(--accent); padding: 5px 15px; border-radius: 50px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+  useEffect(() => {
+    const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
-        .progress-container { height: 8px; background: #334155; border-radius: 10px; margin: 20px 0; }
-        #progress-bar { height: 100%; background: var(--accent); width: 0%; border-radius: 10px; transition: width 0.5s ease; }
+  const getEyeStyle = (eyeRef) => {
+    if (!eyeRef.current) return {};
+    const rect = eyeRef.current.getBoundingClientRect();
+    const eyeCenterX = rect.left + rect.width / 2;
+    const eyeCenterY = rect.top + rect.height / 2;
+    const angle = Math.atan2(mousePos.y - eyeCenterY, mousePos.x - eyeCenterX);
+    const distance = Math.min(14, Math.hypot(mousePos.x - eyeCenterX, mousePos.y - eyeCenterY) / 10);
+    return { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)` };
+  };
 
-        .question-area { min-height: 100px; margin-bottom: 20px; }
-        .question-area p { font-size: 1.1rem; line-height: 1.5; color: #e2e8f0; }
-
-        .options-grid { display: grid; gap: 10px; }
-        .btn-opt {
-            background: #334155;
-            border: 2px solid transparent;
-            color: var(--text);
-            padding: 14px;
-            border-radius: 12px;
-            cursor: pointer;
-            text-align: left;
-            font-size: 0.95rem;
-            transition: 0.2s;
-        }
-
-        .btn-opt:hover { background: #475569; border-color: var(--accent); }
-        .btn-opt.correct { background: var(--correct) !important; border-color: var(--correct); }
-        .btn-opt.wrong { background: var(--wrong) !important; border-color: var(--wrong); }
-
-        #footer-info { display: flex; justify-content: space-between; margin-top: 25px; font-size: 0.8rem; color: #94a3b8; border-top: 1px solid #334155; padding-top: 15px; }
-
-        #results-screen { display: none; text-align: center; padding: 20px 0; }
-        .big-score { font-size: 4rem; font-weight: bold; color: var(--accent); margin: 10px 0; }
-        .btn-restart { background: var(--accent); color: var(--bg); border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-    </style>
-</head>
-<body>
-
-<div id="dashboard">
-    <div id="quiz-screen">
-        <header>
-            <span class="badge">Especialidad: Oftalmología</span>
-            <h1>🔬 SUNDAY SCIENCE</h1>
-        </header>
-
-        <div class="progress-container"><div id="progress-bar"></div></div>
-
-        <div class="question-area">
-            <p id="txt-pregunta">Preparando instrumental médico...</p>
+  return (
+    <div className="flex gap-8 justify-center items-center mb-10">
+      {[eyeLeftRef, eyeRightRef].map((ref, i) => (
+        <div key={i} ref={ref} className="w-24 h-24 bg-white rounded-full border-4 border-[#60BFB6] relative flex items-center justify-center shadow-[0_0_30px_rgba(96,191,182,0.3)] overflow-hidden">
+          <div className="w-12 h-12 bg-[#054159] rounded-full relative transition-transform duration-75 ease-out flex items-center justify-center" style={getEyeStyle(ref)}>
+             <div className="w-4 h-4 bg-white rounded-full absolute top-1.5 left-1.5 opacity-80"></div>
+             <div className="w-4 h-4 bg-black rounded-full opacity-30"></div>
+          </div>
         </div>
-
-        <div id="btn-container" class="options-grid"></div>
-
-        <div id="footer-info">
-            <span>Pregunta: <b id="idx-actual">1</b> / 5</span>
-            <span>Aciertos: <b id="puntos">0</b></span>
-        </div>
+      ))}
     </div>
+  );
+};
 
-    <div id="results-screen">
-        <h2 id="final-status">Fin de la Consulta</h2>
-        <div class="big-score" id="final-score">0/5</div>
-        <p id="final-msg"></p>
-        <button class="btn-restart" onclick="location.reload()">NUEVO PACIENTE</button>
-    </div>
-</div>
+const App = () => {
+  const [step, setStep] = useState('welcome');
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [userName, setUserName] = useState('');
+  const [isAnimating, setIsAnimating] = useState(false);
+  const canvasRef = useRef(null);
 
-<script>
-    const bancoPreguntas = [
-        { p: "Fondo de ojo con retinitis en 'queso de pizza' (hemorragias y exudados) en inmunodeprimido:", o: ["Coroidopatía central", "Retinitis por CMV", "Desprendimiento retina", "Endoftalmitis"], c: 1 },
-        { p: "Causa más frecuente de LEUCOCORIA en la infancia tras descartar Retinoblastoma:", o: ["Catarata congénita", "Enfermedad de Coats", "Vítreo primario", "Retinopatía del prematuro"], c: 0 },
-        { p: "Pérdida de visión, dolor al mover el ojo, DPAR (+) y fondo de ojo NORMAL:", o: ["Neuritis retrobulbar", "Oclusión arterial", "Papiledema", "Glaucoma crónico"], c: 0 },
-        { p: "Los 'Infiltrados subepiteliales numulares' post-conjuntivitis son típicos de:", o: ["Infección por VIH", "Secuela de Adenovirus", "Uveítis anterior", "Glaucoma agudo"], c: 1 },
-        { p: "Signo de 'Humo de chimenea' en angiografía con desprendimiento seroso en paciente joven:", o: ["Vogt-Koyanagi-Harada", "Central Serosa", "Coroiditis Birdshot", "Melanoma"], c: 1 }
+  useEffect(() => { loadConfetti(); }, []);
+
+  const questions = [
+    {
+      id: 1,
+      category: "Glaucoma / Neuro",
+      question: "¿Cuál de los siguientes hallazgos en la perimetría computarizada es más característico de un paciente con un adenoma hipofisario que comprime el quiasma óptico?",
+      options: ["Escotoma arciforme de Bjerrum", "Hemianopsia bitemporal que respeta la fijación", "Cuadrantanopsia homónima superior", "Escotoma central unilateral"],
+      correct: 1,
+      explanation: "¡Exacto! Compresión central = Hemianopsia bitemporal. Clásico del MIR."
+    },
+    {
+      id: 2,
+      category: "Retina",
+      question: "Paciente de 65 años con metamorfopsia súbita. En la OCT se observa un desprendimiento del epitelio pigmentario (DEP) fibrovascular. ¿Tratamiento inicial?",
+      options: ["Fotocoagulación láser Argón", "Inyección intravítrea de anti-VEGF", "Vitrectomía pars plana urgente", "Observación semanal"],
+      correct: 1,
+      explanation: "¡Elemental! Los anti-VEGF son el Gold Standard para este tipo de DEP."
+    },
+    {
+      id: 3,
+      category: "Uveítis",
+      question: "¿Qué asociación HLA es más frecuente en un paciente con uveítis anterior aguda recidivante, hipopión y dolor lumbar?",
+      options: ["HLA-B51", "HLA-A29", "HLA-B27", "HLA-DR4"],
+      correct: 2,
+      explanation: "¡B27! Pack completo: uveítis y espondilitis. Nivel experto dominical."
+    },
+    {
+      id: 4,
+      category: "Farmacología",
+      question: "¿Cuál de estos colirios hipotensores está contraindicado en un paciente con asma bronquial severa?",
+      options: ["Latanoprost", "Brimonidina", "Timolol", "Dorzolamida"],
+      correct: 2,
+      explanation: "¡Timolol! Betabloqueantes y asma no se llevan bien. Cuidado con los broncoespasmos."
+    },
+    {
+      id: 5,
+      category: "Córnea",
+      question: "En un queratocono avanzado con hidropes corneal agudo, ¿manejo inicial correcto?",
+      options: ["Queratoplastia de urgencia", "Tratamiento conservador (pomadas/vendaje)", "Cross-linking inmediato", "Riboflavina estromal"],
+      correct: 1,
+      explanation: "¡Exacto! El hidropes se trata con paciencia. No operes sobre el edema agudo."
+    }
+  ];
+
+  const getRank = () => {
+    const ranks = [
+      { title: "Vítreo en Suspensión", emoji: "🫠", color: "from-slate-400 to-slate-700", desc: "Estado líquido total. Vuelve a la cama, hoy no es tu día." },
+      { title: "Miope de Domingo", emoji: "☕", color: "from-red-400 to-orange-500", desc: "Necesitas una corrección de -10 dioptrías y tres cafés bien cargados." },
+      { title: "R1 en Fase de Carga", emoji: "🔋", color: "from-orange-400 to-[#806FA6]", desc: "Procesando... El cerebro todavía está en modo fin de semana." },
+      { title: "Visionario del Vermú", emoji: "🍸", color: "from-[#806FA6] to-[#60BFB6]", desc: "Tienes buena vista, pero el aperitivo te está llamando fuerte." },
+      { title: "Catedrático del Domingo", emoji: "🛋️", color: "from-[#60BFB6] to-[#054159]", desc: "Casi perfecto. Dominas la teoría incluso desde el sofá." },
+      { title: "Oftalmo-Lord de la Galaxia", emoji: "🪐", color: "from-[#054159] via-[#60BFB6] to-[#054159]", desc: "Nivel: Dios del MIR. Tu retina no es de este mundo." }
     ];
+    return ranks[score];
+  };
 
-    let currentIdx = 0;
-    let score = 0;
-    let blockInput = false;
-
-    function startQuiz() {
-        if (currentIdx >= bancoPreguntas.length) return endQuiz();
-        
-        blockInput = false;
-        const data = bancoPreguntas[currentIdx];
-        document.getElementById('txt-pregunta').innerText = data.p;
-        document.getElementById('idx-actual').innerText = currentIdx + 1;
-        document.getElementById('progress-bar').style.width = (currentIdx / bancoPreguntas.length * 100) + "%";
-
-        const container = document.getElementById('btn-container');
-        container.innerHTML = "";
-        
-        data.o.forEach((txt, i) => {
-            const b = document.createElement('button');
-            b.className = 'btn-opt';
-            b.innerText = txt;
-            b.onclick = () => checkAnswer(i, b);
-            container.appendChild(b);
-        });
+  const handleOptionSelect = (index) => {
+    if (showFeedback || isAnimating) return;
+    setSelectedOption(index);
+    setShowFeedback(true);
+    const isCorrect = index === questions[currentQuestion].correct;
+    
+    if (isCorrect) {
+      setScore(prev => prev + 1);
+      if (window.confetti) window.confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#60BFB6', '#054159', '#806FA6'] });
+      setTimeout(() => handleNextStep(), 1000); // Transición ultra rápida si acierta
+    } else {
+      setTimeout(() => handleNextStep(), 2200); // Rápida pero permitiendo ver el error
     }
+  };
 
-    function checkAnswer(chosen, btn) {
-        if (blockInput) return;
-        blockInput = true;
+  const handleNextStep = () => {
+    setIsAnimating(true);
+    setTimeout(() => {
+      if (currentQuestion < questions.length - 1) {
+        setCurrentQuestion(prev => prev + 1);
+        setShowFeedback(false);
+        setSelectedOption(null);
+      } else {
+        setStep('result');
+      }
+      setIsAnimating(false);
+    }, 250);
+  };
 
-        const correct = bancoPreguntas[currentIdx].c;
-        if (chosen === correct) {
-            btn.classList.add('correct');
-            score++;
-            document.getElementById('puntos').innerText = score;
-        } else {
-            btn.classList.add('wrong');
-            document.querySelectorAll('.btn-opt')[correct].classList.add('correct');
-        }
+  const downloadCertificate = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const rank = getRank();
+    
+    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, 800, 600);
+    ctx.strokeStyle = '#054159'; ctx.lineWidth = 20; ctx.strokeRect(0, 0, 800, 600);
+    ctx.strokeStyle = '#60BFB6'; ctx.lineWidth = 4; ctx.strokeRect(25, 25, 750, 550);
+    
+    ctx.fillStyle = '#054159'; ctx.font = 'bold 24px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('CERTIFICACIÓN SUNDAY SCIENCE - BIOTECH IBERIA', 400, 80);
+    
+    ctx.font = 'italic 18px Georgia'; ctx.fillStyle = '#666';
+    ctx.fillText('Acreditación de Agudeza Intelectual MIR', 400, 120);
+    
+    ctx.font = 'bold 45px Georgia'; ctx.fillStyle = '#054159';
+    ctx.fillText(userName.toUpperCase() || 'OFTALMÓLOGO GEEK', 400, 220);
+    
+    ctx.font = '22px sans-serif'; ctx.fillStyle = '#444';
+    ctx.fillText('Ha alcanzado el rango oficial de:', 400, 290);
+    
+    ctx.font = 'bold 38px sans-serif'; ctx.fillStyle = '#60BFB6';
+    ctx.fillText(rank.title.toUpperCase(), 400, 360);
 
-        setTimeout(() => {
-            currentIdx++;
-            startQuiz();
-        }, 1200);
-    }
+    ctx.font = 'italic 18px sans-serif'; ctx.fillStyle = '#806FA6';
+    ctx.fillText(`"${rank.desc}"`, 400, 410);
+    
+    ctx.font = 'bold 18px sans-serif'; ctx.fillStyle = '#054159';
+    ctx.fillText(`RESULTADO: ${score}/5 ACIERTOS EN EL MIR 2026`, 400, 470);
+    
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText('BIOTECH HEALTHCARE IBERIA - INNOVATION IN VISION', 400, 550);
 
-    function endQuiz() {
-        document.getElementById('quiz-screen').style.display = 'none';
-        document.getElementById('results-screen').style.display = 'block';
-        document.getElementById('final-score').innerText = score + "/5";
+    const link = document.createElement('a');
+    link.download = `SundayScience_Diploma_${userName}.png`;
+    link.href = canvas.toDataURL();
+    link.click();
+  };
+
+  return (
+    <div className="min-h-screen bg-[#05161f] font-sans text-white flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      <style>{`
+        @keyframes eye-dance { 0%, 100% { transform: scale(1) rotate(0); } 25% { transform: scale(1.4) rotate(-20deg) translateY(-5px); } 50% { transform: scale(1.1) rotate(20deg); } }
+        @keyframes eye-sad { 0%, 100% { transform: translateY(0); filter: grayscale(0.5); } 50% { transform: translateY(12px) scale(0.9); filter: grayscale(1); opacity: 0.7; } }
+        .animate-eye-dance { animation: eye-dance 0.6s infinite ease-in-out; }
+        .animate-eye-sad { animation: eye-sad 1.2s infinite ease-in-out; }
+        .timer-bar { animation: progress-timer linear forwards; }
+        @keyframes progress-timer { 0% { width: 100%; } 100% { width: 0%; } }
+        .glass-card { background: rgba(15, 41, 51, 0.85); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.1); }
+      `}</style>
+
+      {/* Decoración PDF */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-[0.15]">
+        <div className="absolute top-[-10%] left-[-10%] text-[#60BFB6]"><Hexagon size={600} fill="currentColor" /></div>
+        <div className="absolute bottom-[-10%] right-[-10%] text-[#806FA6]"><Hexagon size={700} fill="currentColor" /></div>
+      </div>
+
+      <header className="w-full max-w-2xl flex justify-between items-center mb-10 relative z-10 px-4">
+        <div className="flex items-center gap-5">
+          <div className="bg-gradient-to-br from-[#054159] to-[#60BFB6] p-4 rounded-3xl shadow-xl shadow-[#054159]/40 border border-white/10">
+            <Eye size={32} className="text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-black tracking-tighter leading-none uppercase">Sunday <span className="text-[#60BFB6]">Science</span></h1>
+            <p className="text-[10px] font-black text-[#806FA6] uppercase tracking-[0.4em] mt-2 font-bold tracking-widest">Biotech Healthcare Iberia</p>
+          </div>
+        </div>
+        <div className="bg-white/10 px-4 py-2 rounded-2xl border border-white/10 flex items-center gap-2 shadow-sm backdrop-blur">
+            <Target size={18} className="text-[#60BFB6]" />
+            <span className="text-xs font-black uppercase text-white/80">MIR 2026 EDITION</span>
+        </div>
+      </header>
+
+      <main className={`w-full max-w-xl glass-card rounded-[4rem] shadow-[0_40px_80px_rgba(0,0,0,0.5)] overflow-hidden relative z-10 transition-all duration-500 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
         
-        let m = "";
-        if(score === 5) {
-            m = "¡Excelente, Doctor! Nivel Especialista alcanzado. 🏆";
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-        } else if(score >= 3) {
-            m = "Buen trabajo. Tu plaza MIR está asegurada. 🩺";
-        } else {
-            m = "Hay que repasar el Atlas de Oftalmología. 📚";
-        }
-        document.getElementById('final-msg').innerText = m;
-    }
+        {step === 'welcome' && (
+          <div className="p-14 text-center">
+            <InteractiveEyes />
+            <h2 className="text-4xl font-bold mb-6 leading-tight">¿Aprobarías el MIR <br/><span className="text-[#60BFB6] font-serif italic tracking-tight font-normal">si te presentaras hoy?</span></h2>
+            <p className="text-slate-400 mb-10 text-xl font-medium px-4 leading-relaxed">Te retamos con las preguntas más polémicas del <strong>MIR 2026</strong>. <br/>¿Sigues en forma o te ha adelantado un residente?</p>
+            <button onClick={() => setStep('quiz')} className="group w-full bg-[#60BFB6] hover:bg-[#4eb1a8] text-[#054159] font-black py-7 px-8 rounded-[2.5rem] transition-all shadow-2xl flex items-center justify-center gap-4 text-2xl relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+              ¿ACEPTAS EL RETO? <ChevronRight size={32} />
+            </button>
+            <div className="mt-12 flex justify-center gap-6 opacity-30">
+                <Hexagon size={24} fill="#60BFB6"/><Hexagon size={24} fill="#806FA6"/><Hexagon size={24} fill="#054159"/>
+            </div>
+          </div>
+        )}
 
-    // Arrancamos
-    startQuiz();
-</script>
-</body>
-</html>
+        {step === 'quiz' && (
+          <div className="p-12 md:p-16">
+            <div className="flex justify-between items-center mb-10">
+              <div className="bg-[#60BFB6] px-5 py-2 rounded-2xl shadow-lg text-[#054159] font-black text-xs uppercase tracking-widest">{questions[currentQuestion].category}</div>
+              <div className="text-right text-[11px] font-black text-slate-500 uppercase tracking-widest">PREGUNTA {currentQuestion + 1}/5</div>
+            </div>
+
+            <h3 className="text-3xl font-bold text-white mb-14 leading-snug">{questions[currentQuestion].question}</h3>
+
+            <div className="grid gap-4 mb-10">
+              {questions[currentQuestion].options.map((option, idx) => {
+                const isCorrect = idx === questions[currentQuestion].correct;
+                const isSelected = selectedOption === idx;
+                let btnStyle = "bg-white/5 border-white/10 text-slate-300 hover:border-[#60BFB6] hover:bg-white/10";
+                if (showFeedback) {
+                  if (isCorrect) btnStyle = "bg-[#60BFB6]/20 border-[#60BFB6] text-[#60BFB6] font-bold shadow-inner";
+                  else if (isSelected) btnStyle = "bg-red-500/20 border-red-500 text-red-500";
+                  else btnStyle = "bg-white/5 border-transparent text-slate-600 opacity-40";
+                }
+                return (
+                  <button key={idx} onClick={() => handleOptionSelect(idx)} disabled={showFeedback} className={`group w-full text-left p-6 rounded-3xl border-2 transition-all duration-300 flex justify-between items-center ${btnStyle}`}>
+                    <span className="font-bold text-xl">{option}</span>
+                    <div className="shrink-0 ml-4">
+                      {showFeedback && isCorrect && <div className="animate-eye-dance"><Eye className="text-[#60BFB6]" size={40} /></div>}
+                      {showFeedback && isSelected && !isCorrect && <div className="animate-eye-sad"><Frown className="text-red-500" size={36} /></div>}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {showFeedback && (
+              <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                 <div className="p-8 rounded-[3rem] bg-black/40 border border-white/10 text-white relative overflow-hidden text-center shadow-xl">
+                    <div className="absolute bottom-0 left-0 h-1 bg-[#60BFB6] shadow-[0_0_20px_#60BFB6] timer-bar" style={{ animationDuration: selectedOption === questions[currentQuestion].correct ? '1s' : '2.2s' }}></div>
+                    <p className="text-slate-200 text-base leading-relaxed italic font-medium">"{questions[currentQuestion].explanation}"</p>
+                 </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {step === 'result' && (
+          <div className="p-16 text-center">
+            <div className="mb-10 inline-flex p-8 bg-white/5 rounded-full shadow-inner border border-white/10">
+                {score === 5 ? <Crown size={80} className="text-[#60BFB6]" /> : <Star size={80} className="text-[#806FA6]" />}
+            </div>
+            <div className="text-8xl font-black text-white mb-4 leading-none tracking-tighter">{score} <span className="text-3xl text-slate-600">/ 5</span></div>
+            <div className={`text-4xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r ${getRank().color} uppercase tracking-tighter leading-tight`}>
+                {getRank().title} {getRank().emoji}
+            </div>
+            <p className="text-slate-400 mb-12 text-xl italic font-medium px-8 leading-relaxed">"{getRank().desc}"</p>
+            
+            <div className="bg-white/5 p-12 rounded-[4rem] border border-white/10 shadow-xl">
+                <p className="text-xs font-black text-[#806FA6] uppercase tracking-[0.3em] mb-8">Personaliza tu Acreditación MIR</p>
+                <input type="text" placeholder="Dr./Dra. Nombre y Apellidos" className="w-full bg-black/40 p-7 rounded-[2rem] border-2 border-white/10 focus:border-[#60BFB6] outline-none mb-10 text-center font-bold text-2xl text-white transition-all shadow-inner" value={userName} onChange={(e) => setUserName(e.target.value)} />
+                <button disabled={!userName} onClick={() => setStep('certificate')} className="w-full bg-[#60BFB6] hover:bg-[#4eb1a8] text-[#054159] font-black py-7 rounded-[2.5rem] flex items-center justify-center gap-5 shadow-2xl transition-all text-2xl text-center">
+                   VER MI CERTIFICADO <Award size={32}/>
+                </button>
+            </div>
+          </div>
+        )}
+
+        {step === 'certificate' && (
+          <div className="p-10 md:p-14 text-center">
+            <div className="bg-white p-2 rounded-[3rem] shadow-2xl border border-slate-200 mb-12 scale-95 md:scale-100">
+              <div id="cert" className="bg-white p-10 md:p-14 rounded-[2.5rem] border-[14px] border-double border-[#054159]/10 relative overflow-hidden text-[#054159]">
+                  <div className="absolute top-0 right-0 p-10 opacity-10"><Hexagon size={160} /></div>
+                  <div className="flex justify-between items-center mb-10">
+                      <div className="text-left"><p className="text-xs font-black text-[#60BFB6] tracking-[0.6em] mb-1 uppercase">Sunday Science Board</p><div className="h-1 w-24 bg-[#60BFB6]"></div></div>
+                      <Eye size={40} className="text-[#054159]/20" />
+                  </div>
+                  <h2 className="text-4xl md:text-5xl font-serif italic text-slate-900 mb-4 tracking-tighter text-center">Diploma de Agudeza MIR</h2>
+                  <p className="text-slate-400 text-[10px] mb-12 uppercase tracking-[0.3em] font-black text-center">Convocatoria: Reto Dominical MIR 2026</p>
+                  <h3 className="text-4xl md:text-6xl font-bold text-[#054159] mb-8 font-serif border-b-[10px] border-[#60BFB6]/10 pb-6 inline-block px-12 italic leading-tight text-center">{userName}</h3>
+                  
+                  <div className="mb-14 text-center">
+                      <p className="text-slate-400 text-xs mb-2 uppercase font-black tracking-widest">Rango Alcanzado:</p>
+                      <span className={`text-3xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r ${getRank().color} uppercase block tracking-tighter`}>{getRank().title}</span>
+                      <p className="text-slate-600 text-lg mt-4 font-medium italic">"{getRank().desc}"</p>
+                  </div>
+
+                  <div className="flex justify-between items-end pt-10 border-t border-slate-100">
+                      <div className="text-left text-[10px] font-mono text-slate-300 font-bold uppercase tracking-widest leading-loose">ID: BHI_MIR2026_{Math.random().toString(36).substring(7).toUpperCase()}<br/>FECHA: {new Date().toLocaleDateString('es-ES', {day:'2-digit', month:'long', year:'numeric'})}</div>
+                      <div className="text-right text-[#054159] font-black"><div className="h-1 w-24 bg-[#054159] mb-3 ml-auto"></div><p className="text-lg italic leading-none">Clinical Board</p><p className="text-[10px] text-[#60BFB6] uppercase tracking-[0.4em] mt-1">Biotech Iberia</p></div>
+                  </div>
+              </div>
+            </div>
+            <canvas ref={canvasRef} width="800" height="600" className="hidden" />
+            <div className="flex flex-col gap-5">
+              <button onClick={downloadCertificate} className="group bg-[#60BFB6] text-[#054159] py-6 rounded-[2.5rem] font-black flex items-center justify-center gap-5 transition-all shadow-2xl text-xl relative overflow-hidden">
+                <Download size={28}/> DESCARGAR DIPLOMA (.PNG)
+              </button>
+              <button onClick={() => window.open('https://www.linkedin.com', '_blank')} className="bg-[#0077b5] text-white py-6 rounded-[2.5rem] font-black flex items-center justify-center gap-5 transition-all shadow-xl hover:bg-[#006097]">
+                <Linkedin size={32}/> COMPARTIR EN MI MURO
+              </button>
+              <button onClick={() => setStep('welcome')} className="text-slate-500 py-6 text-sm font-black uppercase tracking-[0.5em] flex items-center justify-center gap-3 hover:text-[#60BFB6] transition-all">
+                <RefreshCw size={18}/> INTENTAR DE NUEVO
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
+
+      <footer className="w-full max-w-2xl mt-16 text-center text-slate-600 text-[11px] uppercase tracking-[0.6em] font-black relative z-10 flex flex-col items-center gap-8">
+        <p>© 2026 BIOTECH HEALTHCARE IBERIA | SUNDAY SCIENCE SERIES</p>
+      </footer>
+    </div>
+  );
+};
+
+export default App;

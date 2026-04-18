@@ -8,13 +8,15 @@
     <!-- Open Graph / Meta Tags para LinkedIn, WhatsApp, etc. -->
     <meta property="og:title" content="Sunday Science - Biotech Healthcare Iberia" />
     <meta property="og:description" content="¿Aprobarías el MIR si te presentaras hoy? Retamos tu ojo clínico con las preguntas más polémicas del MIR 2026. ¡Entra y descubre tu rango nacional!" />
-    <meta property="og:image" content="https://biotechhealthcareiberia.github.io/Biotech-Sunday-Science/preview.jpg" />
+    <!-- El ?v=2 al final fuerza a LinkedIn a actualizar la caché y coger la imagen nueva -->
+    <meta property="og:image" content="https://biotechhealthcareiberia.github.io/Biotech-Sunday-Science/preview.jpg?v=2" />
     <meta property="og:url" content="https://biotechhealthcareiberia.github.io/Biotech-Sunday-Science/" />
     <meta property="og:type" content="website" />
+    
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Sunday Science - Biotech Healthcare Iberia" />
     <meta name="twitter:description" content="¿Aprobarías el MIR si te presentaras hoy? Retamos tu ojo clínico con las preguntas más polémicas del MIR 2026." />
-    <meta name="twitter:image" content="https://biotechhealthcareiberia.github.io/Biotech-Sunday-Science/preview.jpg" />
+    <meta name="twitter:image" content="https://biotechhealthcareiberia.github.io/Biotech-Sunday-Science/preview.jpg?v=2" />
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -198,7 +200,6 @@
 
             const shareOnLinkedin = () => {
                 const text = getRank().linkedinText;
-                // Abre LinkedIn enviando el texto como parámetro a la ventana de creación de post
                 const url = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
                 window.open(url, '_blank');
             };
@@ -369,8 +370,8 @@
                         )}
 
                         {step === 'certificate' && (
-                            <div className="p-8 md:p-12 text-center animate-fadeIn relative z-10">
-                                <div className="bg-white p-2 rounded-[2rem] shadow-2xl border border-slate-200 mb-8 scale-95 md:scale-100 relative">
+                            <div className="p-8 md:p-14 text-center animate-fadeIn relative z-10">
+                                <div className="bg-white p-2 rounded-[2rem] shadow-2xl border border-slate-200 mb-10 scale-95 md:scale-100 relative">
                                     <div className="certificate-preview p-6 md:p-8 flex flex-col items-center justify-between text-[#054159] rounded-3xl">
                                         <div className="text-center">
                                             <h1 className="text-xl md:text-2xl font-bold tracking-[0.1em] font-montserrat">SUNDAY SCIENCE CERTIFICATION</h1>

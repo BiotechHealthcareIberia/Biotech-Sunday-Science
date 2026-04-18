@@ -8,15 +8,17 @@
     <!-- Open Graph / Meta Tags para LinkedIn, WhatsApp, etc. -->
     <meta property="og:title" content="Sunday Science - Biotech Healthcare Iberia" />
     <meta property="og:description" content="¿Aprobarías el MIR si te presentaras hoy? Retamos tu ojo clínico con las preguntas más polémicas del MIR 2026. ¡Entra y descubre tu rango nacional!" />
-    <!-- El ?v=2 al final fuerza a LinkedIn a actualizar la caché y coger la imagen nueva -->
-    <meta property="og:image" content="https://biotechhealthcareiberia.github.io/Biotech-Sunday-Science/preview.jpg?v=2" />
+    <!-- El ?v=4 fuerza a LinkedIn a actualizar la caché -->
+    <meta property="og:image" content="https://biotechhealthcareiberia.github.io/Biotech-Sunday-Science/preview.jpg?v=4" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:url" content="https://biotechhealthcareiberia.github.io/Biotech-Sunday-Science/" />
     <meta property="og:type" content="website" />
     
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Sunday Science - Biotech Healthcare Iberia" />
     <meta name="twitter:description" content="¿Aprobarías el MIR si te presentaras hoy? Retamos tu ojo clínico con las preguntas más polémicas del MIR 2026." />
-    <meta name="twitter:image" content="https://biotechhealthcareiberia.github.io/Biotech-Sunday-Science/preview.jpg?v=2" />
+    <meta name="twitter:image" content="https://biotechhealthcareiberia.github.io/Biotech-Sunday-Science/preview.jpg?v=4" />
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,11 +32,11 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,700;1,300&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap');
         
         body {
             font-family: 'Source Sans 3', sans-serif;
-            background-color: #05161f;
+            background-color: #06141a; /* Fondo oscuro inspirado en la imagen */
             color: white;
             margin: 0;
             overflow-x: hidden;
@@ -57,12 +59,10 @@
         .timer-bar { animation: progress-timer linear forwards; }
         @keyframes progress-timer { 0% { width: 100%; } 100% { width: 0%; } }
         
-        .glass-card { 
-            background: rgba(15, 41, 51, 0.85); 
-            backdrop-filter: blur(24px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            position: relative;
-            overflow: hidden;
+        .main-card { 
+            background: #0b2532; /* Color específico de la tarjeta de la imagen */
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
         .certificate-preview {
@@ -90,16 +90,13 @@
             return <i data-lucide={name} className={className} style={{ width: size, height: size }}></i>;
         };
 
-        // Componente SVG: Esbozo de Lente Fáquica
+        // Componente SVG: Esbozo de Lente Fáquica (para los fondos)
         const PhakicLensIcon = ({ className }) => (
             <svg viewBox="0 0 120 60" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-                {/* Óptica central */}
                 <circle cx="60" cy="30" r="16" />
                 <circle cx="60" cy="30" r="2" fill="currentColor" />
-                {/* Háptico Izquierdo */}
                 <path d="M 44 25 C 25 15, 10 20, 10 30 C 10 40, 25 45, 44 35" />
                 <circle cx="22" cy="30" r="2" />
-                {/* Háptico Derecho */}
                 <path d="M 76 25 C 95 15, 110 20, 110 30 C 110 40, 95 45, 76 35" />
                 <circle cx="98" cy="30" r="2" />
             </svg>
@@ -122,17 +119,16 @@
                 const eyeCenterX = rect.left + rect.width / 2;
                 const eyeCenterY = rect.top + rect.height / 2;
                 const angle = Math.atan2(mousePos.y - eyeCenterY, mousePos.x - eyeCenterX);
-                const distance = Math.min(14, Math.hypot(mousePos.x - eyeCenterX, mousePos.y - eyeCenterY) / 10);
+                const distance = Math.min(8, Math.hypot(mousePos.x - eyeCenterX, mousePos.y - eyeCenterY) / 12);
                 return { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)` };
             };
 
             return (
-                <div className="flex gap-8 justify-center items-center mb-10 relative z-10">
+                <div className="flex justify-center items-center mb-10 relative z-10 -space-x-4">
                     {[eyeLeftRef, eyeRightRef].map((ref, i) => (
-                        <div key={i} ref={ref} className="w-24 h-24 bg-white rounded-full border-4 border-[#60BFB6] relative flex items-center justify-center shadow-[0_0_30px_rgba(96,191,182,0.3)] overflow-hidden">
+                        <div key={i} ref={ref} className="w-28 h-28 bg-white rounded-full border-[10px] border-[#60BFB6] relative flex items-center justify-center shadow-lg overflow-hidden z-10">
                             <div className="w-12 h-12 bg-[#054159] rounded-full relative transition-transform duration-75 ease-out flex items-center justify-center" style={getEyeStyle(ref)}>
-                                <div className="w-4 h-4 bg-white rounded-full absolute top-1.5 left-1.5 opacity-80"></div>
-                                <div className="w-4 h-4 bg-black rounded-full opacity-30"></div>
+                                <div className="w-3 h-3 bg-white rounded-full absolute top-2 left-2 opacity-90"></div>
                             </div>
                         </div>
                     ))}
@@ -151,11 +147,11 @@
             const canvasRef = useRef(null);
 
             const questions = [
-                { id: 1, category: "Glaucoma / Neuro", question: "¿Cuál de los siguientes hallazgos en la perimetría computarizada es más característico de un paciente con un adenoma hipofisario que comprime el quiasma óptico?", options: ["Escotoma arciforme de Bjerrum", "Hemianopsia bitemporal que respeta la fijación", "Cuadrantanopsia homónima superior", "Escotoma central unilateral"], correct: 1, explanation: "¡Exacto! Compresión central = Hemianopsia bitemporal. Tan preciso como el ajuste de una Eyecryl Phakic." },
-                { id: 2, category: "Retina", question: "Paciente de 65 años con metamorfopsia súbita. En la OCT se observa un desprendimiento del epitelio pigmentario (DEP) fibrovascular. ¿Tratamiento inicial?", options: ["Fotocoagulación láser Argón", "Inyección intravítrea de anti-VEGF", "Vitrectomía pars plana urgente", "Observación semanal"], correct: 1, explanation: "¡Elemental! Los anti-VEGF son el Gold Standard. Una visión nítida es nuestra prioridad, igual que con Eyecryl." },
-                { id: 3, category: "Uveítis", question: "¿Qué asociación HLA es más frecuente en un paciente con uveítis anterior aguda recidivante, hipopión y dolor lumbar?", options: ["HLA-B51", "HLA-A29", "HLA-B27", "HLA-DR4"], correct: 2, explanation: "¡B27! Pack completo de domingo. Para ver estos detalles, hace falta la agudeza que proporciona Biotech Iberia." },
-                { id: 4, category: "Farmacología", question: "¿Cuál de estos colirios hipotensores está contraindicado en un paciente con asma bronquial severa?", options: ["Latanoprost", "Brimonidina", "Timolol", "Dorzolamida"], correct: 2, explanation: "¡Timolol! Enemigo del asma. En Biotech buscamos soluciones seguras y predecibles para cada paciente." },
-                { id: 5, category: "Córnea", question: "En un queratocono avanzado con hidropes corneal agudo, ¿manejo inicial correcto?", options: ["Queratoplastia de urgencia", "Tratamiento conservador (pomadas/vendaje)", "Cross-linking inmediato", "Riboflavina estromal"], correct: 1, explanation: "¡Exacto! Paciencia y manejo médico. La excelencia en el cuidado ocular define a Eyecryl Phakic." }
+                { id: 1, category: "Glaucoma / Neuro", question: "¿Cuál de los siguientes hallazgos en la perimetría computarizada es más característico de un paciente con un adenoma hipofisario que comprime el quiasma óptico?", options: ["Escotoma arciforme de Bjerrum", "Hemianopsia bitemporal que respeta la fijación", "Cuadrantanopsia homónima superior", "Escotoma central unilateral"], correct: 1, explanation: "¡Exacto! Compresión central = Hemianopsia bitemporal." },
+                { id: 2, category: "Retina", question: "Paciente de 65 años con metamorfopsia súbita. En la OCT se observa un desprendimiento del epitelio pigmentario (DEP) fibrovascular. ¿Tratamiento inicial?", options: ["Fotocoagulación láser Argón", "Inyección intravítrea de anti-VEGF", "Vitrectomía pars plana urgente", "Observación semanal"], correct: 1, explanation: "¡Elemental! Los anti-VEGF son el Gold Standard." },
+                { id: 3, category: "Uveítis", question: "¿Qué asociación HLA es más frecuente en un paciente con uveítis anterior aguda recidivante, hipopión y dolor lumbar?", options: ["HLA-B51", "HLA-A29", "HLA-B27", "HLA-DR4"], correct: 2, explanation: "¡B27! Pack completo de domingo." },
+                { id: 4, category: "Farmacología", question: "¿Cuál de estos colirios hipotensores está contraindicado en un paciente con asma bronquial severa?", options: ["Latanoprost", "Brimonidina", "Timolol", "Dorzolamida"], correct: 2, explanation: "¡Timolol! Enemigo del asma." },
+                { id: 5, category: "Córnea", question: "En un queratocono avanzado con hidropes corneal agudo, ¿manejo inicial correcto?", options: ["Queratoplastia de urgencia", "Tratamiento conservador (pomadas/vendaje)", "Cross-linking inmediato", "Riboflavina estromal"], correct: 1, explanation: "¡Exacto! Paciencia y manejo médico." }
             ];
 
             const getRank = () => {
@@ -267,141 +263,130 @@
             };
 
             return (
-                <div className="min-h-screen bg-[#05161f] font-sans text-white flex flex-col items-center justify-center p-4 relative overflow-hidden">
-                    {/* Fondo decorativo con hexágonos y esbozos de lente en los bordes */}
-                    <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-[0.15]">
-                        <div className="absolute top-[-10%] left-[-10%] text-[#60BFB6]"><Icon name="hexagon" size={600} className="fill-current" /></div>
-                        <div className="absolute bottom-[-10%] right-[-10%] text-[#806FA6]"><Icon name="hexagon" size={700} className="fill-current" /></div>
-                        
-                        <PhakicLensIcon className="absolute top-[15%] right-[-5%] w-64 text-[#60BFB6] opacity-30 transform rotate-45" />
-                        <PhakicLensIcon className="absolute bottom-[10%] left-[-5%] w-80 text-[#806FA6] opacity-20 transform -rotate-12" />
-                    </div>
-
-                    <header className="w-full max-w-2xl flex justify-between items-center mb-10 relative z-10 px-4">
-                        <div className="flex items-center gap-5">
-                            <div className="bg-gradient-to-br from-[#054159] to-[#60BFB6] p-4 rounded-3xl shadow-xl border border-white/10">
-                                <Icon name="eye" size={32} className="text-white" />
+                <div className="min-h-screen bg-[#06141a] font-sans text-white flex flex-col items-center justify-center p-4 md:p-8 relative overflow-hidden">
+                    
+                    {/* Header idéntico al de la imagen proporcionada */}
+                    <header className="w-full max-w-[600px] flex justify-between items-start mb-6 relative z-10 px-2 pt-4">
+                        <div className="flex items-center gap-4">
+                            <div className="bg-[#60BFB6] p-3 rounded-2xl shadow-lg flex items-center justify-center">
+                                <Icon name="eye" size={32} className="text-[#054159]" />
                             </div>
-                            <div>
-                                <h1 className="text-2xl font-black tracking-tighter leading-none uppercase font-montserrat text-white">Sunday <span className="text-[#60BFB6]">Science</span></h1>
-                                <p className="text-[10px] font-black text-[#806FA6] uppercase tracking-[0.4em] mt-2 font-bold">Biotech Healthcare Iberia</p>
+                            <div className="flex flex-col mt-1">
+                                <h1 className="text-2xl md:text-3xl font-black tracking-tighter leading-none uppercase font-montserrat text-white">SUNDAY <span className="text-[#60BFB6]">SCIENCE</span></h1>
+                                <p className="text-[9px] md:text-[10px] font-bold text-[#806FA6] uppercase tracking-[0.3em] mt-1.5">Biotech Healthcare Iberia</p>
                             </div>
                         </div>
-                        <div className="bg-white/10 px-4 py-2 rounded-2xl border border-white/10 flex items-center gap-2 shadow-sm backdrop-blur hidden md:flex">
-                            <Icon name="target" size={18} className="text-[#60BFB6]" />
-                            <span className="text-xs font-black uppercase text-white/80">MIR 2026 EDITION</span>
+                        <div className="border border-white/10 bg-[#0b2532] px-4 py-2 rounded-full flex items-center gap-2 shadow-sm">
+                            <Icon name="target" size={16} className="text-[#60BFB6]" />
+                            <span className="text-[11px] font-bold uppercase text-white tracking-widest">MIR 2026</span>
                         </div>
                     </header>
 
-                    <main className={`w-full max-w-xl glass-card rounded-[4rem] shadow-[0_40px_80px_rgba(0,0,0,0.5)] overflow-hidden relative z-10 transition-all duration-500 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+                    <main className={`w-full max-w-[600px] main-card rounded-[2.5rem] relative z-10 transition-all duration-500 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
 
                         {step === 'welcome' && (
-                            <div className="p-14 text-center relative z-10">
+                            <div className="p-10 md:p-14 text-center relative z-10">
                                 <InteractiveEyes />
-                                <h2 className="text-4xl font-bold mb-6 leading-tight font-montserrat uppercase text-white">¿Aprobarías el MIR <br/><span className="text-[#60BFB6] font-serif italic tracking-tight font-normal lowercase">si te presentaras hoy?</span></h2>
-                                <p className="text-slate-400 mb-10 text-xl font-medium px-4 leading-relaxed">Te retamos con las preguntas más polémicas del <strong>MIR 2026</strong>. <br/>¿Sigues en forma o te ha adelantado un residente?</p>
-                                <button onClick={() => setStep('quiz')} className="group w-full bg-[#60BFB6] hover:bg-[#4eb1a8] text-[#054159] font-black py-7 px-8 rounded-[2.5rem] transition-all shadow-2xl flex items-center justify-center gap-4 text-2xl relative overflow-hidden">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                                    ¿ACEPTAS EL RETO? <Icon name="chevron-right" size={32} />
+                                
+                                <h2 className="text-4xl md:text-5xl font-black mb-8 leading-tight font-montserrat uppercase text-white tracking-tight">
+                                    ¿APROBARÍAS EL<br/>MIR<br/>
+                                    <span className="text-[#60BFB6]">SI TE PRESENTARAS<br/>HOY?</span>
+                                </h2>
+                                
+                                <p className="text-slate-300 mb-12 text-lg md:text-xl font-medium px-2 leading-relaxed">
+                                    Te retamos con las 5 preguntas más polémicas del <strong className="text-white font-bold">MIR 2026</strong>. ¿Sigues en forma o te ha adelantado un residente?
+                                </p>
+                                
+                                <button onClick={() => setStep('quiz')} className="group w-full bg-[#60BFB6] hover:bg-[#4eb1a8] text-[#054159] font-black py-6 px-8 rounded-2xl transition-all flex items-center justify-center gap-3 text-2xl uppercase shadow-[0_6px_0_#43968e] active:translate-y-1.5 active:shadow-[0_0px_0_#43968e]">
+                                    ¿ACEPTAS EL RETO? <Icon name="play" size={28} className="fill-current" />
                                 </button>
                             </div>
                         )}
 
                         {step === 'quiz' && (
-                            <div className="p-12 md:p-16 relative z-10">
+                            <div className="p-10 md:p-14 relative z-10">
                                 <div className="flex justify-between items-center mb-10 text-white">
-                                    <div className="bg-[#60BFB6] px-5 py-2 rounded-2xl shadow-lg text-[#054159] font-black text-xs uppercase tracking-widest flex items-center gap-2">
+                                    <div className="bg-[#60BFB6] px-4 py-2 rounded-xl shadow-lg text-[#054159] font-black text-xs uppercase tracking-widest flex items-center gap-2">
                                         <Icon name="zap" size={14} className="fill-[#054159] text-[#054159]" />
                                         {questions[currentQuestion].category}
                                     </div>
-                                    <div className="text-right text-[11px] font-black uppercase tracking-widest">PREGUNTA {currentQuestion + 1}/5</div>
+                                    <div className="text-right text-[11px] font-black uppercase tracking-widest text-[#60BFB6]">PREGUNTA {currentQuestion + 1}/5</div>
                                 </div>
-                                <h3 className="text-3xl font-bold text-white mb-14 leading-snug">{questions[currentQuestion].question}</h3>
-                                <div className="grid gap-4 mb-10 text-white">
+                                <h3 className="text-2xl md:text-3xl font-bold text-white mb-10 leading-snug font-montserrat">{questions[currentQuestion].question}</h3>
+                                <div className="grid gap-4 mb-4 text-white">
                                     {questions[currentQuestion].options.map((option, idx) => {
                                         const isCorrect = idx === questions[currentQuestion].correct;
                                         const isSelected = selectedOption === idx;
-                                        let btnStyle = "bg-white/5 border-white/10 text-slate-300 hover:border-[#60BFB6] hover:bg-white/10";
+                                        let btnStyle = "bg-[#0f2e3d] border-transparent text-slate-200 hover:bg-[#13384a]";
                                         if (showFeedback) {
-                                            if (isCorrect) btnStyle = "bg-[#60BFB6]/20 border-[#60BFB6] text-[#60BFB6] font-bold";
-                                            else if (isSelected) btnStyle = "bg-red-500/20 border-red-500 text-red-500";
-                                            else btnStyle = "bg-white/5 border-transparent text-slate-600 opacity-40";
+                                            if (isCorrect) btnStyle = "bg-[#60BFB6]/20 border-[#60BFB6] border text-[#60BFB6] font-bold";
+                                            else if (isSelected) btnStyle = "bg-red-500/20 border-red-500 border text-red-500";
+                                            else btnStyle = "bg-[#0f2e3d] border-transparent text-slate-500 opacity-50";
                                         }
                                         return (
-                                            <button key={idx} onClick={() => handleOptionSelect(idx)} disabled={showFeedback} className={`group w-full text-left p-6 rounded-3xl border-2 transition-all duration-300 flex justify-between items-center ${btnStyle}`}>
-                                                <span className="font-bold text-xl">{option}</span>
+                                            <button key={idx} onClick={() => handleOptionSelect(idx)} disabled={showFeedback} className={`w-full text-left p-6 rounded-2xl transition-all duration-300 flex justify-between items-center ${btnStyle}`}>
+                                                <span className="font-bold text-lg">{option}</span>
                                                 <div className="shrink-0 ml-4">
-                                                    {showFeedback && isCorrect && <div className="animate-eye-dance"><Icon name="eye" size={40} className="text-[#60BFB6]" /></div>}
-                                                    {showFeedback && isSelected && !isCorrect && <div className="animate-eye-sad"><Icon name="frown" size={36} className="text-red-500" /></div>}
+                                                    {showFeedback && isCorrect && <div className="animate-eye-dance"><Icon name="check-circle" size={32} className="text-[#60BFB6]" /></div>}
+                                                    {showFeedback && isSelected && !isCorrect && <div className="animate-eye-sad"><Icon name="x-circle" size={32} className="text-red-500" /></div>}
                                                 </div>
                                             </button>
                                         );
                                     })}
                                 </div>
-                                {showFeedback && (
-                                    <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-                                        <div className="p-8 rounded-[3rem] bg-black/40 border border-white/10 text-white relative overflow-hidden text-center shadow-xl">
-                                            <div className="absolute bottom-0 left-0 h-1 bg-[#60BFB6] shadow-[0_0_20px_#60BFB6] timer-bar" style={{ animationDuration: selectedOption === questions[currentQuestion].correct ? '0.8s' : '1.8s' }}></div>
-                                            <p className="text-slate-200 text-base leading-relaxed italic font-medium">"{questions[currentQuestion].explanation}"</p>
-                                        </div>
-                                    </div>
-                                )}
                             </div>
                         )}
 
                         {step === 'result' && (
-                            <div className="p-16 text-center text-white relative z-10">
+                            <div className="p-10 md:p-14 text-center text-white relative z-10">
                                 <InteractiveEyes />
-                                <div className="mb-10 inline-flex p-8 bg-white/5 rounded-full shadow-inner border border-white/10 relative">
-                                    {score === 5 ? <Icon name="crown" size={80} className="text-[#60BFB6]" /> : <Icon name="star" size={80} className="text-[#806FA6]" />}
-                                </div>
-                                <div className="text-8xl font-black mb-4 leading-none tracking-tighter">{score} <span className="text-3xl text-slate-600">/ 5</span></div>
-                                <div className={`text-4xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r ${getRank().color} uppercase tracking-tighter leading-tight`}>
+                                <div className="text-7xl md:text-8xl font-black mb-2 leading-none tracking-tighter text-[#60BFB6] font-montserrat">{score} <span className="text-4xl text-slate-500">/ 5</span></div>
+                                <div className="text-3xl md:text-4xl font-black mb-6 uppercase tracking-tighter leading-tight mt-6 font-montserrat">
                                     {getRank().title} {getRank().emoji}
                                 </div>
-                                <p className="text-slate-400 mb-12 text-xl italic font-medium px-8 leading-relaxed">"{getRank().desc}"</p>
-                                <div className="bg-white/5 p-12 rounded-[4rem] border border-white/10 shadow-xl relative overflow-hidden">
-                                    <input type="text" placeholder="Dr./Dra. Nombre y Apellidos" className="w-full bg-black/40 p-7 rounded-[2rem] border-2 border-white/10 focus:border-[#60BFB6] outline-none mb-10 text-center font-bold text-2xl text-white transition-all shadow-inner relative z-10" value={userName} onChange={(e) => setUserName(e.target.value)} />
-                                    <button disabled={!userName} onClick={() => setStep('certificate')} className="w-full bg-[#60BFB6] hover:bg-[#4eb1a8] text-[#054159] font-black py-7 rounded-[2.5rem] flex items-center justify-center gap-5 shadow-2xl transition-all text-2xl relative z-10">
-                                        VER MI CERTIFICADO <Icon name="award" size={32}/>
+                                <p className="text-slate-300 mb-10 text-lg font-medium px-4 leading-relaxed">"{getRank().desc}"</p>
+                                <div className="bg-[#06141a] p-8 md:p-10 rounded-[2rem] shadow-inner relative overflow-hidden">
+                                    <input type="text" placeholder="Dr./Dra. Nombre y Apellidos" className="w-full bg-[#0b2532] p-6 rounded-xl border border-white/10 focus:border-[#60BFB6] outline-none mb-8 text-center font-bold text-xl text-white transition-all" value={userName} onChange={(e) => setUserName(e.target.value)} />
+                                    <button disabled={!userName} onClick={() => setStep('certificate')} className="w-full bg-[#60BFB6] hover:bg-[#4eb1a8] text-[#054159] font-black py-6 rounded-xl flex items-center justify-center gap-3 shadow-[0_6px_0_#43968e] active:translate-y-1.5 active:shadow-[0_0px_0_#43968e] transition-all text-xl uppercase">
+                                        VER CERTIFICADO <Icon name="award" size={28}/>
                                     </button>
                                 </div>
                             </div>
                         )}
 
                         {step === 'certificate' && (
-                            <div className="p-8 md:p-14 text-center animate-fadeIn relative z-10">
-                                <div className="bg-white p-2 rounded-[2rem] shadow-2xl border border-slate-200 mb-10 scale-95 md:scale-100 relative">
-                                    <div className="certificate-preview p-6 md:p-8 flex flex-col items-center justify-between text-[#054159] rounded-3xl">
+                            <div className="p-8 md:p-12 text-center animate-fadeIn relative z-10">
+                                <div className="bg-white p-2 rounded-[2rem] shadow-2xl mb-8">
+                                    <div className="certificate-preview p-6 flex flex-col items-center justify-between text-[#054159] rounded-3xl">
                                         <div className="text-center">
-                                            <h1 className="text-xl md:text-2xl font-bold tracking-[0.1em] font-montserrat">SUNDAY SCIENCE CERTIFICATION</h1>
-                                            <p className="italic text-slate-500 mt-2 font-light text-xs">Mención Especial por preferir un Test MIR a la siesta</p>
+                                            <h1 className="text-lg md:text-xl font-bold tracking-[0.1em] font-montserrat">SUNDAY SCIENCE CERTIFICATION</h1>
+                                            <p className="italic text-slate-500 mt-1 font-light text-[10px] md:text-xs">Mención Especial por preferir un Test MIR a la siesta</p>
                                         </div>
                                         <div className="text-center">
-                                            <h2 className="text-3xl md:text-5xl font-black mb-2 font-montserrat tracking-tight uppercase">{userName || 'USUARIO'}</h2>
-                                            <p className="text-lg text-slate-700 font-light">Ha alcanzado el rango de:</p>
-                                            <p className="text-2xl md:text-4xl font-bold text-[#60BFB6] mt-2 font-montserrat tracking-tighter uppercase">{getRank().title}</p>
-                                            <p className="text-slate-400 mt-4 text-xs font-bold">Puntuación: {score}/5 aciertos en el MIR 2026</p>
+                                            <h2 className="text-3xl md:text-4xl font-black mb-2 font-montserrat tracking-tight uppercase">{userName || 'USUARIO'}</h2>
+                                            <p className="text-sm md:text-base text-slate-700 font-light">Ha alcanzado el rango de:</p>
+                                            <p className="text-2xl md:text-3xl font-bold text-[#60BFB6] mt-2 font-montserrat tracking-tighter uppercase">{getRank().title}</p>
+                                            <p className="text-slate-400 mt-3 text-[10px] md:text-xs font-bold">Puntuación: {score}/5 aciertos en el MIR 2026</p>
                                         </div>
                                         <div className="text-center w-full">
-                                            <p className="italic text-slate-500 mb-4 font-light text-[10px]">"Diagnóstico realizado con éxito bajo los efectos del domingo"</p>
-                                            <p className="font-bold text-[9px] md:text-[10px] tracking-widest border-t border-slate-100 pt-4 uppercase">Biotech Healthcare Iberia - Innovation in Vision</p>
+                                            <p className="italic text-slate-500 mb-3 font-light text-[9px] md:text-[10px]">"Diagnóstico realizado con éxito bajo los efectos del domingo"</p>
+                                            <p className="font-bold text-[8px] md:text-[9px] tracking-widest border-t border-slate-100 pt-3 uppercase">Biotech Healthcare Iberia - Innovation in Vision</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <canvas ref={canvasRef} width="1123" height="794" className="hidden" />
                                 
-                                <div className="max-w-md mx-auto flex flex-col gap-4">
-                                    <button onClick={downloadCertificate} className="bg-[#60BFB6] text-[#054159] w-full py-4 rounded-xl font-black flex items-center justify-center gap-3 shadow-2xl text-lg transition-all hover:bg-[#4eb1a8]">
+                                <div className="flex flex-col gap-4">
+                                    <button onClick={downloadCertificate} className="bg-[#60BFB6] hover:bg-[#4eb1a8] text-[#054159] w-full py-5 rounded-2xl font-black flex items-center justify-center gap-3 shadow-[0_6px_0_#43968e] active:translate-y-1.5 active:shadow-[0_0px_0_#43968e] transition-all text-xl">
                                         <Icon name="download" size={24}/> DESCARGAR
                                     </button>
                                     
-                                    <button onClick={shareOnLinkedin} className="bg-[#0077b5] hover:bg-[#006097] text-white w-full py-4 rounded-xl font-black flex items-center justify-center gap-3 shadow-xl transition-all text-lg">
-                                        <Icon name="linkedin" size={24}/> COMPARTIR EN LINKEDIN
+                                    <button onClick={shareOnLinkedin} className="bg-[#0077b5] hover:bg-[#006097] text-white w-full py-5 rounded-2xl font-black flex items-center justify-center gap-3 shadow-[0_6px_0_#005582] active:translate-y-1.5 active:shadow-[0_0px_0_#005582] transition-all text-xl mt-2">
+                                        <Icon name="linkedin" size={24} className="fill-current"/> COMPARTIR EN LINKEDIN
                                     </button>
 
-                                    <button onClick={() => setStep('welcome')} className="text-slate-500 py-3 text-xs font-black uppercase tracking-[0.4em] flex items-center justify-center gap-2 hover:text-[#60BFB6] transition-all mt-2">
+                                    <button onClick={() => setStep('welcome')} className="text-slate-400 py-4 text-[11px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-2 hover:text-[#60BFB6] transition-all mt-2">
                                         <Icon name="refresh-cw" size={16}/> JUGAR OTRA VEZ
                                     </button>
                                 </div>
@@ -409,8 +394,8 @@
                         )}
                     </main>
 
-                    <footer className="w-full max-w-2xl mt-16 text-center text-slate-600 text-[11px] uppercase tracking-[0.6em] font-black relative z-10 flex flex-col items-center gap-8">
-                        <p>© 2026 BIOTECH HEALTHCARE IBERIA | SUNDAY SCIENCE SERIES</p>
+                    <footer className="w-full max-w-2xl mt-12 text-center text-slate-500 text-[10px] md:text-[11px] uppercase tracking-[0.6em] font-black relative z-10 mb-6">
+                        <p>© 2026 BIOTECH HEALTHCARE IBERIA</p>
                     </footer>
                 </div>
             );

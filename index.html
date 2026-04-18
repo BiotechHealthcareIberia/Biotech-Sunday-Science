@@ -2,41 +2,153 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sunday Science - Biotech Healthcare Iberia</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & Babel -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,700;1,300&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap');
         
         body {
             font-family: 'Source Sans 3', sans-serif;
-            background-color: #05161f;
+            background-color: #020a0f; 
             color: white;
             margin: 0;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        ::selection {
+            background-color: #60BFB6;
+            color: #054159;
         }
 
         .font-montserrat { font-family: 'Montserrat', sans-serif; }
 
-        @keyframes eye-dance { 0%, 100% { transform: scale(1) rotate(0); } 25% { transform: scale(1.4) rotate(-20deg) translateY(-5px); } 50% { transform: scale(1.1) rotate(20deg); } }
-        @keyframes eye-sad { 0%, 100% { transform: translateY(0); filter: grayscale(0.5); } 50% { transform: translateY(12px) scale(0.9); filter: grayscale(1); opacity: 0.7; } }
-        .animate-eye-dance { animation: eye-dance 0.6s infinite ease-in-out; }
+        /* Físicas THE LAST CRUMB - Trivial Premium */
+        .btn-trivia {
+            position: relative;
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background-color: #60BFB6;
+            color: #054159;
+            border: 2px solid #60BFB6;
+            box-shadow: 0 6px 0 #3a8a83;
+        }
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 #3a8a83;
+        }
+
+        .btn-linkedin {
+            background-color: #0a66c2;
+            color: white;
+            border: 2px solid #0a66c2;
+            box-shadow: 0 6px 0 #074c94;
+        }
+        .btn-linkedin:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 #074c94;
+        }
+
+        .btn-option {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 0 rgba(255, 255, 255, 0.1);
+        }
+        @media (hover: hover) {
+            .btn-option:hover:not(:disabled) {
+                background-color: rgba(255, 255, 255, 0.1);
+                border-color: #60BFB6;
+            }
+        }
+        .btn-option:active:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Estados de respuesta */
+        .btn-correct {
+            background-color: #60BFB6 !important;
+            color: #054159 !important;
+            border-color: #60BFB6 !important;
+            box-shadow: 0 4px 0 #3a8a83 !important;
+            transform: translateY(0) !important;
+        }
+        .btn-wrong {
+            background-color: #ef4444 !important;
+            color: white !important;
+            border-color: #ef4444 !important;
+            box-shadow: 0 4px 0 #b91c1c !important;
+            transform: translateY(0) !important;
+        }
+
+        /* Animaciones Ojos */
+        @keyframes eye-dance { 0%, 100% { transform: scale(1) rotate(0); } 25% { transform: scale(1.2) rotate(-15deg) translateY(-2px); } 50% { transform: scale(1.1) rotate(15deg); } }
+        @keyframes eye-sad { 0%, 100% { transform: translateY(0); filter: grayscale(0.5); } 50% { transform: translateY(6px) scale(0.9); filter: grayscale(1); opacity: 0.8; } }
+        .animate-eye-dance { animation: eye-dance 0.5s infinite ease-in-out; }
         .animate-eye-sad { animation: eye-sad 1.2s infinite ease-in-out; }
         
+        /* Barra de tiempo */
         .timer-bar { animation: progress-timer linear forwards; }
         @keyframes progress-timer { 0% { width: 100%; } 100% { width: 0%; } }
         
+        /* Cristal avanzado responsivo */
         .glass-card { 
-            background: rgba(15, 41, 51, 0.85); 
-            backdrop-filter: blur(24px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
+            background: rgba(5, 65, 89, 0.5); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(96, 191, 182, 0.2); 
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(96, 191, 182, 0.05);
         }
+
+        /* Input premium */
+        .input-premium {
+            background: rgba(0,0,0,0.5);
+            border: 2px solid rgba(255,255,255,0.15);
+            transition: all 0.3s ease;
+        }
+        .input-premium:focus {
+            border-color: #60BFB6;
+            box-shadow: 0 0 15px rgba(96, 191, 182, 0.3);
+        }
+        
+        /* Animaciones Lente Phakic (Holograma) */
+        @keyframes spin-slow { 100% { transform: rotate(360deg); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
+        .subliminal-lens { animation: spin-slow 60s linear infinite; }
+        .float-lens { animation: float 6s ease-in-out infinite; }
+
+        /* Efecto Flash Subliminal Mejorado */
+        @keyframes subliminal-flash {
+            0% { opacity: 0; transform: scale(0.8) translate(-50%, -50%); filter: brightness(1) drop-shadow(0 0 0px #60BFB6); }
+            10% { opacity: 0.6; transform: scale(1.2) translate(-50%, -50%); filter: brightness(1.5) drop-shadow(0 0 20px #60BFB6); }
+            30% { opacity: 0; transform: scale(1.5) translate(-50%, -50%); filter: brightness(1) drop-shadow(0 0 0px #60BFB6); }
+            100% { opacity: 0; }
+        }
+        .flash-active { 
+            animation: subliminal-flash 0.8s cubic-bezier(0.1, 0.8, 0.2, 1) forwards; 
+            transform-origin: top left;
+        }
+        
+        /* Truco de diseño: mix-blend-screen quita el fondo negro de la imagen JPG de la lente */
+        .blend-hologram { mix-blend-mode: screen; }
     </style>
 </head>
 <body>
@@ -47,7 +159,7 @@
 
         const Icon = ({ name, size = 24, className = "" }) => {
             useEffect(() => { if (window.lucide) window.lucide.createIcons(); }, [name]);
-            return <i data-lucide={name} className={className} style={{ width: size, height: size }}></i>;
+            return <i data-lucide={name} className={className} style={{ width: size, height: size, minWidth: size, minHeight: size }}></i>;
         };
 
         const InteractiveEyes = () => {
@@ -56,9 +168,20 @@
             const eyeRightRef = useRef(null);
 
             useEffect(() => {
-                const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
+                const handleMouseMove = (e) => requestAnimationFrame(() => setMousePos({ x: e.clientX, y: e.clientY }));
                 window.addEventListener('mousemove', handleMouseMove);
-                return () => window.removeEventListener('mousemove', handleMouseMove);
+                
+                const handleTouchMove = (e) => {
+                    if(e.touches.length > 0) {
+                        requestAnimationFrame(() => setMousePos({ x: e.touches[0].clientX, y: e.touches[0].clientY }));
+                    }
+                };
+                window.addEventListener('touchmove', handleTouchMove);
+                
+                return () => {
+                    window.removeEventListener('mousemove', handleMouseMove);
+                    window.removeEventListener('touchmove', handleTouchMove);
+                }
             }, []);
 
             const getEyeStyle = (eyeRef) => {
@@ -67,17 +190,17 @@
                 const eyeCenterX = rect.left + rect.width / 2;
                 const eyeCenterY = rect.top + rect.height / 2;
                 const angle = Math.atan2(mousePos.y - eyeCenterY, mousePos.x - eyeCenterX);
-                const distance = Math.min(14, Math.hypot(mousePos.x - eyeCenterX, mousePos.y - eyeCenterY) / 10);
+                const distance = Math.min(8, Math.hypot(mousePos.x - eyeCenterX, mousePos.y - eyeCenterY) / 15);
                 return { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)` };
             };
 
             return (
-                <div className="flex gap-8 justify-center items-center mb-10">
+                <div className="flex gap-4 md:gap-6 justify-center items-center mb-6 md:mb-8 relative z-10">
                     {[eyeLeftRef, eyeRightRef].map((ref, i) => (
-                        <div key={i} ref={ref} className="w-24 h-24 bg-white rounded-full border-4 border-[#60BFB6] relative flex items-center justify-center shadow-[0_0_30px_rgba(96,191,182,0.3)] overflow-hidden">
-                            <div className="w-12 h-12 bg-[#054159] rounded-full relative transition-transform duration-75 ease-out flex items-center justify-center" style={getEyeStyle(ref)}>
-                                <div className="w-4 h-4 bg-white rounded-full absolute top-1.5 left-1.5 opacity-80"></div>
-                                <div className="w-4 h-4 bg-black rounded-full opacity-30"></div>
+                        <div key={i} ref={ref} className="w-16 h-16 md:w-24 md:h-24 bg-white rounded-full border-4 md:border-[6px] border-[#60BFB6] relative flex items-center justify-center shadow-[0_0_25px_rgba(96,191,182,0.3)] overflow-hidden">
+                            <div className="w-8 h-8 md:w-12 md:h-12 bg-[#054159] rounded-full relative transition-transform duration-75 ease-out flex items-center justify-center shadow-inner" style={getEyeStyle(ref)}>
+                                <div className="w-2.5 h-2.5 md:w-4 md:h-4 bg-white rounded-full absolute top-1 md:top-1.5 left-1 md:left-1.5 opacity-80"></div>
+                                <div className="w-2.5 h-2.5 md:w-4 md:h-4 bg-black rounded-full opacity-40"></div>
                             </div>
                         </div>
                     ))}
@@ -93,6 +216,8 @@
             const [selectedOption, setSelectedOption] = useState(null);
             const [userName, setUserName] = useState('');
             const [isAnimating, setIsAnimating] = useState(false);
+            const [flashSubliminal, setFlashSubliminal] = useState(false);
+            const [copySuccess, setCopySuccess] = useState(false);
             const canvasRef = useRef(null);
 
             const questions = [
@@ -140,14 +265,19 @@
 
             const getRank = () => {
                 const ranks = [
-                    { title: "Vítreo en Suspensión", emoji: "🫠", color: "#94a3b8", desc: "Estado líquido total. Vuelve a la cama, hoy no es tu día." },
-                    { title: "Miope de Domingo", emoji: "☕", color: "#f87171", desc: "Necesitas una corrección de -10 dioptrías y tres cafés bien cargados." },
-                    { title: "R1 en Fase de Carga", emoji: "🔋", color: "#fb923c", desc: "Procesando... El cerebro todavía está en modo fin de semana." },
-                    { title: "Visionario del Vermú", emoji: "🍸", color: "#60BFB6", desc: "Tienes buena vista, pero el aperitivo te está llamando fuerte." },
-                    { title: "Catedrático del Domingo", emoji: "🛋️", color: "#806FA6", desc: "Casi perfecto. Dominas la teoría incluso desde el sofá." },
-                    { title: "Oftalmo-Lord de la Galaxia", emoji: "🪐", color: "#054159", desc: "Nivel: Dios del MIR. Tu retina no es de este mundo." }
+                    { title: "Vítreo en Suspensión", emoji: "🫠", color: "from-slate-400 to-slate-600", text: "text-slate-400", desc: "Estado líquido total. Vuelve a la cama, hoy no es tu día." },
+                    { title: "Miope de Domingo", emoji: "☕", color: "from-red-400 to-orange-500", text: "text-red-400", desc: "Necesitas una corrección de -10 dioptrías y tres cafés bien cargados." },
+                    { title: "R1 en Fase de Carga", emoji: "🔋", color: "from-orange-400 to-[#806FA6]", text: "text-orange-400", desc: "Procesando... El cerebro todavía está en modo fin de semana." },
+                    { title: "Visionario del Vermú", emoji: "🍸", color: "from-[#806FA6] to-[#60BFB6]", text: "text-[#806FA6]", desc: "Tienes buena vista, pero el aperitivo te está llamando fuerte." },
+                    { title: "Catedrático del Domingo", emoji: "🛋️", color: "from-[#60BFB6] to-[#054159]", text: "text-[#60BFB6]", desc: "Casi perfecto. Dominas la teoría incluso desde el sofá." },
+                    { title: "Oftalmo-Lord de la Galaxia", emoji: "🪐", color: "from-[#054159] via-[#60BFB6] to-[#054159]", text: "text-[#60BFB6]", desc: "Nivel: Dios del MIR. Tu retina no es de este mundo." }
                 ];
                 return ranks[score];
+            };
+
+            const triggerSubliminalFlash = () => {
+                setFlashSubliminal(true);
+                setTimeout(() => setFlashSubliminal(false), 800);
             };
 
             const handleOptionSelect = (index) => {
@@ -155,12 +285,13 @@
                 setSelectedOption(index);
                 setShowFeedback(true);
                 const isCorrect = index === questions[currentQuestion].correct;
+                
                 if (isCorrect) {
                     setScore(prev => prev + 1);
-                    if (window.confetti) window.confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#60BFB6', '#054159', '#806FA6'] });
-                    setTimeout(() => handleNextStep(), 1000); 
+                    if (window.confetti) window.confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 }, colors: ['#60BFB6', '#054159', '#806FA6'] });
+                    setTimeout(() => { triggerSubliminalFlash(); handleNextStep(); }, 1200); 
                 } else {
-                    setTimeout(() => handleNextStep(), 2200);
+                    setTimeout(() => { triggerSubliminalFlash(); handleNextStep(); }, 2200);
                 }
             };
 
@@ -182,107 +313,177 @@
                 const canvas = canvasRef.current;
                 const ctx = canvas.getContext('2d');
                 const rank = getRank();
-                ctx.fillStyle = '#FFFFFF';
-                ctx.fillRect(0, 0, 1123, 794);
-                ctx.strokeStyle = '#054159';
-                ctx.lineWidth = 30;
-                ctx.strokeRect(40, 40, 1043, 714);
+                
+                ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, 1123, 794);
+                ctx.strokeStyle = '#054159'; ctx.lineWidth = 30; ctx.strokeRect(40, 40, 1043, 714);
+                
                 ctx.textAlign = 'center';
                 ctx.fillStyle = '#054159';
-                ctx.font = 'bold 38px Montserrat';
-                ctx.fillText('SUNDAY SCIENCE CERTIFICATION', 561, 130);
-                ctx.font = 'italic 24px "Source Sans 3"';
+                ctx.font = 'bold 36px Montserrat';
+                ctx.fillText('SUNDAY SCIENCE CERTIFICATION', 561, 140);
+                
+                ctx.font = 'italic 22px "Source Sans 3"';
                 ctx.fillStyle = '#666666';
-                ctx.fillText('Mención Especial por preferir un Test MIR a la siesta', 561, 180);
-                ctx.font = 'bold 65px Montserrat';
+                ctx.fillText('Mención Especial por preferir un Test MIR a la siesta', 561, 190);
+                
+                ctx.font = 'bold 60px Montserrat';
                 ctx.fillStyle = '#054159';
-                ctx.fillText(userName.toUpperCase() || 'HÉROE DEL MIR', 561, 320);
-                ctx.font = '30px "Source Sans 3"';
+                ctx.fillText(userName.toUpperCase() || 'HÉROE DEL MIR', 561, 330);
+                
+                ctx.font = '26px "Source Sans 3"';
                 ctx.fillStyle = '#333333';
-                ctx.fillText('Ha alcanzado el rango de:', 561, 390);
-                ctx.font = 'bold 55px Montserrat';
+                ctx.fillText('Ha alcanzado el rango de:', 561, 400);
+                
+                ctx.font = 'bold 50px Montserrat';
                 ctx.fillStyle = '#60BFB6';
-                ctx.fillText(rank.title.toUpperCase(), 561, 460);
+                ctx.fillText(rank.title.toUpperCase(), 561, 470);
+
                 ctx.font = '22px "Source Sans 3"';
                 ctx.fillStyle = '#999999';
-                ctx.fillText(`Puntuación: ${score}/5 aciertos en el MIR 2026`, 561, 530);
-                ctx.font = 'italic 20px "Source Sans 3"';
+                ctx.fillText(`Puntuación: ${score}/5 aciertos en el MIR 2026`, 561, 540);
+                
+                ctx.font = 'italic 18px "Source Sans 3"';
                 ctx.fillStyle = '#666666';
-                ctx.fillText('"Diagnóstico realizado con éxito bajo los efectos del domingo"', 561, 610);
-                ctx.font = 'bold 18px Montserrat';
+                ctx.fillText('"Diagnóstico realizado con éxito bajo los efectos del domingo"', 561, 620);
+                
+                ctx.font = 'bold 16px Montserrat';
                 ctx.fillStyle = '#054159';
-                ctx.fillText('BIOTECH HEALTHCARE IBERIA - INNOVATION IN VISION', 561, 710);
+                ctx.fillText('BIOTECH HEALTHCARE IBERIA - ACCESS TO INNOVATION', 561, 710);
+
                 const link = document.createElement('a');
-                link.download = `Diploma_SundayScience_${userName}.png`;
+                link.download = `SundayScience_Horizontal_${userName}.png`;
                 link.href = canvas.toDataURL();
                 link.click();
             };
 
+            const shareOnLinkedIn = () => {
+                const rank = getRank();
+                const postText = `¿Crees que tienes buen ojo clínico o solo suerte de domingo? 👀 Acabo de sacar un ${score}/5 en el #SundayScience de Biotech Healthcare Iberia y mi nivel oficial es: ${rank.title.toUpperCase()}.\n\nReto a cualquier R1, Adjunto o Jefe de Servicio a intentar superarme en estas 5 preguntas del MIR 2026. (Aviso: abstenerse si tienes el vítreo en suspensión 🫠).\n\n👇 Entra al reto y comparte tu diploma.\n\n#Oftalmologia #BiotechHealthcareIberia #RetoMIR #SundayScience`;
+
+                const textArea = document.createElement("textarea");
+                textArea.value = postText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    setCopySuccess(true);
+                    setTimeout(() => setCopySuccess(false), 4000);
+                } catch (err) {
+                    console.error('Error al copiar', err);
+                }
+                document.body.removeChild(textArea);
+
+                window.open('https://www.linkedin.com/feed/?shareActive=true', '_blank');
+            };
+
             return (
-                <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
-                    <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-[0.15]">
-                        <div className="absolute top-[-10%] left-[-10%] text-[#60BFB6]"><Icon name="hexagon" size={600} className="fill-current" /></div>
-                        <div className="absolute bottom-[-10%] right-[-10%] text-[#806FA6]"><Icon name="hexagon" size={700} className="fill-current" /></div>
+                <div className="min-h-screen flex flex-col items-center justify-center p-3 md:p-4 relative overflow-hidden">
+                    
+                    {/* Imagen de Fondo: Innovación (nkjnk.jpg) */}
+                    {(step === 'welcome' || step === 'result') && (
+                        <div className="fixed inset-0 z-0 opacity-[0.15] pointer-events-none transition-opacity duration-1000">
+                            <img src="nkjnk.jpg" className="w-full h-full object-cover blend-hologram" alt="Access to Innovation" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#020a0f] via-transparent to-[#020a0f]"></div>
+                        </div>
+                    )}
+
+                    {/* Flash Subliminal Lente (Eyecryl Phakic.jpg) */}
+                    {flashSubliminal && (
+                        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center bg-white/5 backdrop-blur-[2px]">
+                            <img src="Eyecryl Phakic.jpg" className="w-[600px] md:w-[1000px] object-contain blend-hologram flash-active absolute top-1/2 left-1/2" alt="Lente Subliminal" />
+                        </div>
+                    )}
+
+                    {/* Decoración de Fondo y Lente Phakic flotando (Holograma) */}
+                    <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+                        <div className="absolute top-[-5%] left-[-20%] md:top-[-10%] md:left-[-10%] text-[#60BFB6] opacity-[0.08]">
+                            <Icon name="hexagon" size={400} className="fill-current md:w-[600px] md:h-[600px]" />
+                        </div>
+                        {/* El holograma de la lente usa la imagen real en escritorio */}
+                        <div className="absolute top-[15%] right-[-10%] opacity-[0.05] float-lens hidden md:block">
+                            <img src="Eyecryl Phakic.jpg" className="w-[650px] object-contain blend-hologram subliminal-lens" alt="Holograma Lente" />
+                        </div>
+                        <div className="absolute bottom-[-10%] right-[-20%] md:bottom-[-10%] md:right-[-10%] text-[#806FA6] opacity-[0.08]">
+                            <Icon name="hexagon" size={500} className="fill-current md:w-[700px] md:h-[700px]" />
+                        </div>
                     </div>
 
-                    <header className="w-full max-w-2xl flex justify-between items-center mb-10 relative z-10 px-4">
-                        <div className="flex items-center gap-5">
-                            <div className="bg-gradient-to-br from-[#054159] to-[#60BFB6] p-4 rounded-3xl shadow-xl shadow-[#054159]/40 border border-white/10">
-                                <Icon name="eye" size={32} className="text-white" />
+                    <header className="w-full max-w-2xl flex justify-between items-center mb-6 md:mb-8 relative z-10 px-2 md:px-0">
+                        <div className="flex items-center gap-3 md:gap-4">
+                            <div className="bg-[#60BFB6] p-2 md:p-3 rounded-xl md:rounded-2xl shadow-[0_3px_0_#3a8a83] md:shadow-[0_4px_0_#3a8a83] border border-white/20">
+                                <Icon name="eye" size={24} className="text-[#054159] md:w-7 md:h-7" />
                             </div>
                             <div>
-                                <h1 className="text-2xl font-black tracking-tighter leading-none uppercase font-montserrat text-white">Sunday <span className="text-[#60BFB6]">Science</span></h1>
-                                <p className="text-[10px] font-black text-[#806FA6] uppercase tracking-[0.4em] mt-2 font-bold tracking-widest">Biotech Healthcare Iberia</p>
+                                <h1 className="text-xl md:text-2xl font-black tracking-tighter leading-none uppercase font-montserrat text-white drop-shadow-md">Sunday <span className="text-[#60BFB6]">Science</span></h1>
+                                <p className="text-[8px] md:text-[10px] text-[#806FA6] uppercase mt-1 font-bold tracking-[0.3em]">Biotech Healthcare Iberia</p>
                             </div>
+                        </div>
+                        <div className="bg-white/10 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl border border-white/20 flex items-center gap-1.5 md:gap-2 shadow-[0_3px_0_rgba(0,0,0,0.3)] backdrop-blur">
+                            <Icon name="target" size={14} className="text-[#60BFB6] md:w-4 md:h-4" />
+                            <span className="text-[9px] md:text-[10px] font-black uppercase text-white tracking-widest font-montserrat">MIR 2026</span>
                         </div>
                     </header>
 
-                    <main className={`w-full max-w-xl glass-card rounded-[4rem] shadow-[0_40px_80px_rgba(0,0,0,0.5)] overflow-hidden relative z-10 transition-all duration-500 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+                    <main className={`w-full max-w-2xl glass-card rounded-[2rem] md:rounded-[2.5rem] overflow-hidden relative z-10 transition-all duration-300 ease-out ${isAnimating ? 'opacity-0 scale-[0.95] translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}>
                         
                         {step === 'welcome' && (
-                            <div className="p-14 text-center">
+                            <div className="p-6 md:p-14 text-center relative">
                                 <InteractiveEyes />
-                                <h2 className="text-4xl font-bold mb-6 leading-tight font-montserrat uppercase text-white">¿Aprobarías el MIR <br/><span className="text-[#60BFB6] font-serif italic tracking-tight font-normal lowercase">si te presentaras hoy?</span></h2>
-                                <p className="text-slate-400 mb-10 text-xl font-medium px-4 leading-relaxed">Te retamos con las preguntas más polémicas del <strong>MIR 2026</strong>. <br/>¿Sigues en forma o te ha adelantado un residente?</p>
-                                <button onClick={() => setStep('quiz')} className="group w-full bg-[#60BFB6] hover:bg-[#4eb1a8] text-[#054159] font-black py-7 px-8 rounded-[2.5rem] transition-all shadow-2xl flex items-center justify-center gap-4 text-2xl relative overflow-hidden">
-                                    ¿ACEPTAS EL RETO? <Icon name="chevron-right" size={32} />
+                                <h2 className="text-3xl md:text-5xl font-black mb-4 md:mb-6 leading-tight font-montserrat text-white uppercase tracking-tighter drop-shadow-lg relative z-10">
+                                    ¿Aprobarías el MIR <br/>
+                                    <span className="text-[#60BFB6]">si te presentaras hoy?</span>
+                                </h2>
+                                <p className="text-slate-300 mb-8 md:mb-10 text-sm md:text-lg font-medium px-2 md:px-4 leading-relaxed relative z-10">
+                                    Te retamos con las 5 preguntas más polémicas del <strong>MIR 2026</strong>. <br className="hidden md:block"/>¿Sigues en forma o te ha adelantado un residente?
+                                </p>
+                                <button onClick={() => setStep('quiz')} className="btn-trivia btn-primary w-full py-5 md:py-6 px-6 md:px-8 rounded-xl md:rounded-[1.5rem] flex items-center justify-center gap-2 md:gap-3 text-lg md:text-2xl z-10 relative">
+                                    ¿ACEPTAS EL RETO? <Icon name="play" size={24} className="fill-current md:w-7 md:h-7" />
                                 </button>
                             </div>
                         )}
 
                         {step === 'quiz' && (
-                            <div className="p-12 md:p-16">
-                                <div className="flex justify-between items-center mb-10 text-white">
-                                    <div className="bg-[#60BFB6] px-5 py-2 rounded-2xl shadow-lg text-[#054159] font-black text-xs uppercase tracking-widest">{questions[currentQuestion].category}</div>
-                                    <div className="text-right text-[11px] font-black uppercase tracking-widest">PREGUNTA {currentQuestion + 1}/5</div>
+                            <div className="p-6 md:p-12">
+                                <div className="flex justify-between items-center mb-6 md:mb-8">
+                                    <div className="bg-[#60BFB6] px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl text-[#054159] font-black text-[9px] md:text-xs uppercase tracking-widest shadow-[0_2px_0_#3a8a83] md:shadow-[0_3px_0_#3a8a83] font-montserrat">
+                                        {questions[currentQuestion].category}
+                                    </div>
+                                    <div className="text-right text-[10px] md:text-[12px] font-black uppercase tracking-widest text-slate-300 bg-black/30 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl border border-white/10">
+                                        <span className="text-[#60BFB6]">{currentQuestion + 1}</span> / 5
+                                    </div>
                                 </div>
-                                <h3 className="text-3xl font-bold text-white mb-14 leading-snug">{questions[currentQuestion].question}</h3>
-                                <div className="grid gap-4 mb-10 text-white">
+                                <h3 className="text-xl md:text-3xl font-bold text-white mb-8 md:mb-10 leading-snug tracking-tight">
+                                    {questions[currentQuestion].question}
+                                </h3>
+                                <div className="grid gap-3 md:gap-4 mb-6 md:mb-8">
                                     {questions[currentQuestion].options.map((option, idx) => {
                                         const isCorrect = idx === questions[currentQuestion].correct;
                                         const isSelected = selectedOption === idx;
-                                        let btnStyle = "bg-white/5 border-white/10 text-slate-300 hover:border-[#60BFB6] hover:bg-white/10";
+                                        
+                                        let btnClass = "btn-option text-slate-200";
                                         if (showFeedback) {
-                                            if (isCorrect) btnStyle = "bg-[#60BFB6]/20 border-[#60BFB6] text-[#60BFB6] font-bold";
-                                            else if (isSelected) btnStyle = "bg-red-500/20 border-red-500 text-red-500";
-                                            else btnStyle = "bg-white/5 border-transparent text-slate-600 opacity-40";
+                                            if (isCorrect) btnClass = "btn-correct";
+                                            else if (isSelected) btnClass = "btn-wrong";
+                                            else btnClass = "bg-white/5 border-transparent text-slate-600 opacity-30 cursor-not-allowed";
                                         }
+                                        
                                         return (
-                                            <button key={idx} onClick={() => handleOptionSelect(idx)} disabled={showFeedback} className={`group w-full text-left p-6 rounded-3xl border-2 transition-all duration-300 flex justify-between items-center ${btnStyle}`}>
-                                                <span className="font-bold text-xl">{option}</span>
-                                                <div className="shrink-0 ml-4">
-                                                    {showFeedback && isCorrect && <div className="animate-eye-dance"><Icon name="eye" size={40} className="text-[#60BFB6]" /></div>}
-                                                    {showFeedback && isSelected && !isCorrect && <div className="animate-eye-sad"><Icon name="frown" size={36} className="text-red-500" /></div>}
+                                            <button key={idx} onClick={() => handleOptionSelect(idx)} disabled={showFeedback} className={`btn-trivia w-full text-left p-4 md:p-6 rounded-xl md:rounded-[1.25rem] flex justify-between items-center ${btnClass}`}>
+                                                <span className="font-bold text-sm md:text-xl normal-case font-sans tracking-normal">{option}</span>
+                                                <div className="shrink-0 ml-3 md:ml-4">
+                                                    {showFeedback && isCorrect && <div className="animate-eye-dance"><Icon name="check-circle-2" size={24} className="text-[#054159] md:w-8 md:h-8" /></div>}
+                                                    {showFeedback && isSelected && !isCorrect && <div className="animate-eye-sad"><Icon name="x-circle" size={24} className="text-white md:w-8 md:h-8" /></div>}
                                                 </div>
                                             </button>
                                         );
                                     })}
                                 </div>
                                 {showFeedback && (
-                                    <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-                                        <div className="p-8 rounded-[3rem] bg-black/40 border border-white/10 text-white relative overflow-hidden text-center shadow-xl">
-                                            <div className="absolute bottom-0 left-0 h-1 bg-[#60BFB6] timer-bar" style={{ animationDuration: selectedOption === questions[currentQuestion].correct ? '1s' : '2.2s' }}></div>
-                                            <p className="text-slate-200 text-base leading-relaxed italic font-medium">"{questions[currentQuestion].explanation}"</p>
+                                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+                                        <div className={`p-4 md:p-6 rounded-xl md:rounded-2xl border-2 relative overflow-hidden shadow-2xl ${selectedOption === questions[currentQuestion].correct ? 'bg-[#60BFB6] border-white text-[#054159]' : 'bg-red-500 border-white text-white'}`}>
+                                            <div className={`absolute bottom-0 left-0 h-1.5 timer-bar ${selectedOption === questions[currentQuestion].correct ? 'bg-[#054159]' : 'bg-black/50'}`} style={{ animationDuration: selectedOption === questions[currentQuestion].correct ? '0.8s' : '2.0s' }}></div>
+                                            <p className="text-sm md:text-lg font-black uppercase tracking-widest mb-1 font-montserrat">{selectedOption === questions[currentQuestion].correct ? '¡Correcto!' : '¡Incorrecto!'}</p>
+                                            <p className="text-sm md:text-base font-semibold leading-relaxed">"{questions[currentQuestion].explanation}"</p>
                                         </div>
                                     </div>
                                 )}
@@ -290,56 +491,77 @@
                         )}
 
                         {step === 'result' && (
-                            <div className="p-16 text-center text-white">
-                                <div className="mb-10 inline-flex p-8 bg-white/5 rounded-full border border-white/10">
-                                    {score === 5 ? <Icon name="crown" size={80} className="text-[#60BFB6]" /> : <Icon name="star" size={80} className="text-[#806FA6]" />}
+                            <div className="p-8 md:p-14 text-center">
+                                <div className="mb-4 md:mb-6 inline-flex p-4 md:p-6 bg-white/10 rounded-full border-4 border-[#60BFB6] shadow-[0_0_30px_rgba(96,191,182,0.3)] relative z-10">
+                                    {score === 5 ? <Icon name="crown" size={48} className="text-[#60BFB6] animate-bounce md:w-[70px] md:h-[70px]" /> : <Icon name="star" size={48} className="text-[#806FA6] md:w-[70px] md:h-[70px]" />}
                                 </div>
-                                <div className="text-8xl font-black mb-4 leading-none tracking-tighter">{score} <span className="text-3xl text-slate-600">/ 5</span></div>
-                                <div className="text-4xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#60BFB6] to-white uppercase tracking-tighter leading-tight">
+                                <div className="text-6xl md:text-8xl font-black mb-1 md:mb-2 leading-none tracking-tighter font-montserrat text-white drop-shadow-lg relative z-10">{score} <span className="text-2xl md:text-4xl text-slate-500">/ 5</span></div>
+                                <div className={`text-2xl md:text-4xl font-black mb-3 md:mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-[#60BFB6] uppercase tracking-tighter leading-tight font-montserrat ${getRank().text} relative z-10`}>
                                     {getRank().title} {getRank().emoji}
                                 </div>
-                                <p className="text-slate-400 mb-12 text-xl italic font-medium px-8 leading-relaxed">"{getRank().desc}"</p>
-                                <div className="bg-white/5 p-12 rounded-[4rem] border border-white/10 shadow-xl">
-                                    <input type="text" placeholder="Dr./Dra. Nombre y Apellidos" className="w-full bg-black/40 p-7 rounded-[2rem] border-2 border-white/10 focus:border-[#60BFB6] outline-none mb-10 text-center font-bold text-2xl text-white transition-all shadow-inner" value={userName} onChange={(e) => setUserName(e.target.value)} />
-                                    <button disabled={!userName} onClick={() => setStep('certificate')} className="w-full bg-[#60BFB6] hover:bg-[#4eb1a8] text-[#054159] font-black py-7 rounded-[2.5rem] flex items-center justify-center gap-5 shadow-2xl transition-all text-2xl">
-                                        VER MI CERTIFICADO <Icon name="award" size={32}/>
+                                <p className="text-slate-300 mb-8 md:mb-10 text-sm md:text-lg italic font-medium px-2 md:px-4 leading-relaxed relative z-10">"{getRank().desc}"</p>
+                                
+                                <div className="bg-black/60 backdrop-blur-md p-6 md:p-8 rounded-2xl md:rounded-[2rem] border border-white/10 shadow-inner relative z-10">
+                                    <p className="text-[10px] md:text-xs font-black text-[#60BFB6] uppercase tracking-[0.2em] mb-3 md:mb-4 font-montserrat">Reclama tu trofeo</p>
+                                    <input type="text" placeholder="Tu Nombre y Apellidos" className="input-premium w-full p-4 md:p-5 rounded-xl outline-none mb-4 md:mb-6 text-center font-bold text-lg md:text-xl text-white" value={userName} onChange={(e) => setUserName(e.target.value)} />
+                                    <button disabled={!userName} onClick={() => setStep('certificate')} className="btn-trivia btn-primary w-full py-4 md:py-5 rounded-xl flex items-center justify-center gap-2 md:gap-3 text-lg md:text-xl disabled:opacity-50 disabled:transform-none disabled:shadow-none">
+                                        VER MI DIPLOMA <Icon name="award" size={24} className="md:w-7 md:h-7"/>
                                     </button>
                                 </div>
                             </div>
                         )}
 
                         {step === 'certificate' && (
-                            <div className="p-6 md:p-10 text-center animate-fadeIn">
-                                <div className="bg-white p-2 shadow-2xl rounded-lg max-w-4xl mx-auto border-2 border-slate-200">
-                                    <div className="aspect-[1.414/1] bg-white border-[12px] border-[#054159] p-6 flex flex-col items-center justify-between text-[#054159]">
-                                        <div className="text-center">
-                                            <h1 className="text-xl md:text-2xl font-bold tracking-[0.2em] font-montserrat">SUNDAY SCIENCE CERTIFICATION</h1>
-                                            <p className="italic text-slate-500 mt-2 font-light text-xs md:text-sm">Mención Especial por preferir un Test MIR a la siesta</p>
+                            <div className="p-4 md:p-10 text-center animate-in fade-in zoom-in-95 duration-500">
+                                <div className="bg-white p-2 shadow-2xl rounded-xl md:rounded-[1.5rem] max-w-4xl mx-auto border border-slate-200 transform -rotate-1 hover:rotate-0 transition-transform duration-300 relative group">
+                                    {/* El Canvas visual para el usuario */}
+                                    <div className="aspect-[1.414/1] bg-white border-[6px] md:border-[10px] border-[#054159] p-4 md:p-6 flex flex-col items-center justify-between text-[#054159] relative overflow-hidden">
+                                        {/* Marca de agua de la lente integrada sutilmente */}
+                                        <img src="Eyecryl Phakic.jpg" className="absolute top-[-10%] right-[-10%] w-[300px] md:w-[600px] object-contain opacity-5 mix-blend-multiply pointer-events-none" alt="" />
+                                        
+                                        <div className="text-center w-full z-10">
+                                            <h1 className="text-[12px] md:text-2xl font-black tracking-[0.1em] font-montserrat text-[#054159]">SUNDAY SCIENCE CERTIFICATION</h1>
+                                            <p className="italic text-slate-500 mt-0.5 md:mt-1 font-semibold text-[8px] md:text-sm">Mención Especial por preferir un Test MIR a la siesta</p>
                                         </div>
-                                        <div className="text-center">
-                                            <h2 className="text-4xl md:text-5xl font-black mb-2 font-montserrat tracking-tight uppercase">{userName || 'USUARIO'}</h2>
-                                            <p className="text-lg md:text-xl text-slate-700 font-light">Ha alcanzado el rango de:</p>
-                                            <p className="text-3xl md:text-4xl font-bold text-[#60BFB6] mt-2 font-montserrat tracking-tighter uppercase">{getRank().title}</p>
-                                            <p className="text-slate-400 mt-4 text-xs">Puntuación: {score}/5 aciertos en el MIR 2026</p>
+                                        <div className="text-center w-full px-2 md:px-4 z-10">
+                                            <h2 className="text-2xl md:text-5xl font-black mb-1 md:mb-2 font-montserrat tracking-tighter uppercase truncate text-[#054159]">{userName || 'USUARIO'}</h2>
+                                            <p className="text-[10px] md:text-lg text-slate-700 font-bold">Ha alcanzado el rango de:</p>
+                                            <p className="text-lg md:text-4xl font-black text-[#60BFB6] mt-0.5 md:mt-1 font-montserrat tracking-tighter uppercase leading-tight">{getRank().title}</p>
+                                            <p className="text-slate-400 mt-2 md:mt-3 text-[8px] md:text-xs font-black uppercase tracking-widest">Puntuación: {score}/5 aciertos (MIR 2026)</p>
                                         </div>
-                                        <div className="text-center w-full">
-                                            <p className="italic text-slate-500 mb-6 font-light text-[10px] md:text-xs">"Diagnóstico realizado con éxito bajo los efectos del domingo"</p>
-                                            <p className="font-bold text-[9px] md:text-[11px] tracking-widest border-t border-slate-100 pt-4 uppercase">Biotech Healthcare Iberia - Innovation in Vision</p>
+                                        <div className="text-center w-full z-10">
+                                            <p className="italic text-slate-400 mb-2 md:mb-4 font-bold text-[7px] md:text-xs">"Diagnóstico realizado con éxito bajo los efectos del domingo"</p>
+                                            <p className="font-black text-[6px] md:text-[10px] tracking-[0.1em] md:tracking-[0.2em] border-t border-slate-200 pt-2 md:pt-3 uppercase text-[#054159]">Biotech Healthcare Iberia - access to innovation</p>
                                         </div>
                                     </div>
                                 </div>
                                 <canvas ref={canvasRef} width="1123" height="794" className="hidden" />
-                                <div className="mt-8 flex flex-col gap-4">
-                                    <button onClick={downloadCertificate} className="bg-[#60BFB6] hover:bg-[#4eb1a8] text-[#054159] font-black py-5 rounded-[2rem] flex items-center justify-center gap-3 shadow-xl transition-all text-xl">
-                                        <Icon name="download" /> DESCARGAR PNG HORIZONTAL
+                                
+                                <div className="mt-6 md:mt-8 flex flex-col gap-3 md:gap-4 max-w-sm mx-auto w-full">
+                                    <button onClick={downloadCertificate} className="btn-trivia btn-primary w-full py-4 md:py-5 rounded-xl flex items-center justify-center gap-2 md:gap-3 text-sm md:text-lg">
+                                        <Icon name="download" size={20} className="md:w-6 md:h-6"/> DESCARGAR PNG
                                     </button>
-                                    <button onClick={() => setStep('welcome')} className="text-slate-500 py-4 text-sm font-black uppercase tracking-[0.5em] flex items-center justify-center gap-3 hover:text-[#60BFB6] transition-all">
-                                        <Icon name="refresh-cw" size={18}/> REINTENTAR TEST
+                                    <button onClick={shareOnLinkedIn} className={`btn-trivia w-full py-4 md:py-5 rounded-xl flex items-center justify-center gap-2 md:gap-3 text-sm md:text-lg transition-all ${copySuccess ? 'bg-green-500 text-white border-2 border-green-500 shadow-[0_6px_0_#166534] md:shadow-[0_8px_0_#166534]' : 'btn-linkedin'}`}>
+                                        <Icon name={copySuccess ? "check-circle-2" : "linkedin"} size={20} className="md:w-6 md:h-6"/> 
+                                        {copySuccess ? "¡COPIADO AL PORTAPAPELES!" : "COMPARTIR EN LINKEDIN"}
+                                    </button>
+                                    <div className="bg-black/30 rounded-lg p-2.5 md:p-3 border border-white/10 mt-1 md:mt-2 text-left flex gap-2.5 md:gap-3 items-start">
+                                        <Icon name="info" size={16} className="text-[#60BFB6] shrink-0 mt-0.5 md:w-5 md:h-5" />
+                                        <p className="text-[10px] md:text-xs text-slate-300 font-medium leading-relaxed">
+                                            <strong>Truco Pro:</strong> Al hacer clic en compartir, <strong>copiaremos un texto épico automáticamente</strong>. Sube tu diploma y pulsa <span className="bg-white/20 px-1 rounded text-white font-mono text-[9px] md:text-[10px]">Pegar</span> en LinkedIn. ¡A picarse!
+                                        </p>
+                                    </div>
+                                    <button onClick={() => setStep('welcome')} className="text-slate-400 py-2 md:py-3 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] flex items-center justify-center gap-2 hover:text-[#60BFB6] transition-colors mt-1 md:mt-2">
+                                        <Icon name="refresh-cw" size={14} className="md:w-4 md:h-4"/> JUGAR OTRA VEZ
                                     </button>
                                 </div>
                             </div>
                         )}
                     </main>
+
+                    <footer className="w-full max-w-2xl mt-8 md:mt-12 text-center text-slate-500 text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-black relative z-10 pb-4">
+                        <p>© 2026 Biotech Healthcare Iberia</p>
+                    </footer>
                 </div>
             );
         };
